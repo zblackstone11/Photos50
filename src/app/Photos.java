@@ -1,6 +1,7 @@
-package PhotosPackage;
+package app;
 
 // Just a test class to see if JavaFX is working, will host main function later too though
+// The main class that launches the JavaFX application. It sets up the primary stage and loads the initial scene.
 
 import javafx.application.Application;
 import javafx.scene.Scene;

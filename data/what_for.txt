@@ -1,1 +1,0 @@
-Stock photos for the stock username should be in the data directory.
