@@ -1,0 +1,1 @@
+Class for the LoginView.fxml file. This class is responsible for the login view of the application. It contains the login form and the login button. It also contains the logic to handle the login button click event.
