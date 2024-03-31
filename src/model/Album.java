@@ -1,33 +1,40 @@
 package model;
 
+import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.io.Serializable;
+import java.util.Objects;
+
 // Represents an album with properties like name, list of photos, and possibly date range 
 // (earliest and latest photo dates). Methods might include adding/removing photos, renaming the album, etc.
 
-public class Album {
+public class Album implements Serializable {
 
     // First some fields including the name of the album and a list of photos. Also date of creation and date of last modification.
 
+    private static final long serialVersionUID = 1L;
     private String name;
-    private java.util.ArrayList<Photo> photos;
-    private java.time.LocalDate dateCreated;
-    private java.time.LocalDate dateModified;
+    private ArrayList<Photo> photos;
+    private final LocalDate dateCreated;
+    private LocalDate dateModified;
 
     // Constructors: one that takes just the name, and one that takes name and photos.
 
     // Constructor that takes just the name.
     public Album(String name) {
         this.name = name;
-        this.photos = new java.util.ArrayList<Photo>();
-        this.dateCreated = java.time.LocalDate.now();
-        this.dateModified = java.time.LocalDate.now();
+        this.photos = new ArrayList<Photo>();
+        this.dateCreated = LocalDate.now();
+        this.dateModified = LocalDate.now();
     }
 
     // Constructor that takes name and photos.
     public Album(String name, java.util.ArrayList<Photo> photos) {
         this.name = name;
-        this.photos = new java.util.ArrayList<>(photos); // make a copy of the list
-        this.dateCreated = java.time.LocalDate.now();
-        this.dateModified = java.time.LocalDate.now();
+        this.photos = new ArrayList<>(photos); // make a copy of the list
+        this.dateCreated = LocalDate.now();
+        this.dateModified = LocalDate.now();
     }
 
     // Getters and setters for all fields.
@@ -43,27 +50,27 @@ public class Album {
     }
 
     // Getter for photos.
-    public java.util.ArrayList<Photo> getPhotos() {
+    public ArrayList<Photo> getPhotos() {
         return photos;
     }
 
     // Setter for photos. Might drop this and just use addPhoto/removePhoto methods.
-    public void setPhotos(java.util.ArrayList<Photo> photos) {
+    public void setPhotos(ArrayList<Photo> photos) {
         this.photos = photos;
     }
 
     // Getter for dateCreated.
-    public java.time.LocalDate getDateCreated() {
+    public LocalDate getDateCreated() {
         return dateCreated;
     }
 
     // Getter for dateModified.
-    public java.time.LocalDate getDateModified() {
+    public LocalDate getDateModified() {
         return dateModified;
     }
 
     // Setter for dateModified.
-    public void setDateModified(java.time.LocalDate dateModified) {
+    public void setDateModified(LocalDate dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -72,7 +79,7 @@ public class Album {
     // Method to add a photo to the album.
     public void addPhoto(Photo photo) {
         photos.add(photo);
-        dateModified = java.time.LocalDate.now();
+        dateModified = LocalDate.now();
     }
 
     // Method to remove a photo from the album.
@@ -82,11 +89,11 @@ public class Album {
             return;
         }
         photos.remove(photo);
-        dateModified = java.time.LocalDate.now();
+        dateModified = LocalDate.now();
     }
 
     // Method to get the list of photos in the album.
-    public java.util.ArrayList<Photo> getPhotoList() {
+    public ArrayList<Photo> getPhotoList() {
         return photos;
     }
 
@@ -113,7 +120,7 @@ public class Album {
     // Hashcode method.
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(name, photos, dateCreated, dateModified);
+        return Objects.hash(name, photos, dateCreated, dateModified);
     }
 
     // toString method.
@@ -124,7 +131,7 @@ public class Album {
 
     // Sorting method to sort the photos in the album by date.
     public void sortPhotosByDate() {
-        photos.sort(new java.util.Comparator<Photo>() {
+        photos.sort(new Comparator<Photo>() {
             @Override
             public int compare(Photo p1, Photo p2) {
                 return p1.getDate().compareTo(p2.getDate());
@@ -134,7 +141,7 @@ public class Album {
 
     // Sorting method to sort the photos in the album by tags.
     public void sortPhotosByTags() {
-        photos.sort(new java.util.Comparator<Photo>() {
+        photos.sort(new Comparator<Photo>() {
             @Override
             public int compare(Photo p1, Photo p2) {
                 return p1.getTags().toString().compareTo(p2.getTags().toString());
@@ -143,8 +150,8 @@ public class Album {
     }
 
     // Tag aggregation method to get all tags in the album.
-    public java.util.ArrayList<Tag> getAllTags() {
-        java.util.ArrayList<Tag> allTags = new java.util.ArrayList<>();
+    public ArrayList<Tag> getAllTags() {
+        ArrayList<Tag> allTags = new ArrayList<>();
         for (Photo p : photos) {
             for (Tag t : p.getTags()) {
                 if (!allTags.contains(t)) {
@@ -156,8 +163,8 @@ public class Album {
     }
 
     // Photo retrieval method to get all photos with a certain tag.
-    public java.util.ArrayList<Photo> getPhotosWithTag(Tag tag) {
-        java.util.ArrayList<Photo> photosWithTag = new java.util.ArrayList<>();
+    public ArrayList<Photo> getPhotosWithTag(Tag tag) {
+        ArrayList<Photo> photosWithTag = new ArrayList<>();
         for (Photo p : photos) {
             if (p.getTags().contains(tag)) {
                 photosWithTag.add(p);
@@ -167,10 +174,10 @@ public class Album {
     }
 
     // Photo retrieval method to get all photos taken within a certain date range.
-    public java.util.ArrayList<Photo> getPhotosInDateRange(java.time.LocalDate startDate, java.time.LocalDate endDate) {
-        java.util.ArrayList<Photo> photosInDateRange = new java.util.ArrayList<>();
+    public ArrayList<Photo> getPhotosInDateRange(LocalDate startDate, LocalDate endDate) {
+        ArrayList<Photo> photosInDateRange = new ArrayList<>();
         for (Photo p : photos) {
-            if (p.getDate().compareTo(startDate) >= 0 && p.getDate().compareTo(endDate) <= 0) {
+            if (p.getDate().isAfter(startDate) && p.getDate().isBefore(endDate)) {
                 photosInDateRange.add(p);
             }
         }

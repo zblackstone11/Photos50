@@ -2,26 +2,31 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.time.LocalDate;
+import java.io.Serializable;
+import java.io.IOException;
 
 // Represents a user with properties like username, list of albums, and possibly a password. 
 // Methods might involve album management (add, delete, rename).
 
-public class User {
+public class User implements Serializable {
 
     // First some fields including the username and a list of albums.
+    private static final long serialVersionUID = 1L;
     private String username;
-    private java.util.ArrayList<Album> albums;
+    private ArrayList<Album> albums;
 
     // Constructor that takes just the username.
     public User(String username) {
         this.username = username;
-        this.albums = new java.util.ArrayList<Album>();
+        this.albums = new ArrayList<Album>();
     }
 
     // Constructor that takes username and albums.
-    public User(String username, java.util.ArrayList<Album> albums) {
+    public User(String username, ArrayList<Album> albums) {
         this.username = username;
-        this.albums = new java.util.ArrayList<>(albums); // make a copy of the list
+        this.albums = new ArrayList<>(albums); // make a copy of the list
     }
 
     // Getters and setters for all fields.
@@ -37,12 +42,12 @@ public class User {
     }
 
     // Getter for albums.
-    public java.util.ArrayList<Album> getAlbums() {
+    public ArrayList<Album> getAlbums() {
         return albums;
     }
 
     // Setter for albums. Might drop this and just use addAlbum/removeAlbum methods.
-    public void setAlbums(java.util.ArrayList<Album> albums) {
+    public void setAlbums(ArrayList<Album> albums) {
         this.albums = albums;
     }
 
@@ -93,7 +98,7 @@ public class User {
     }
 
     // Method to get albums by date range.
-    public List<Album> getAlbumsByDateRange(java.time.LocalDate startDate, java.time.LocalDate endDate) {
+    public List<Album> getAlbumsByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Album> matchingAlbums = new ArrayList<>();
         for (Album album : albums) {
             for (Photo photo : album.getPhotos()) {
@@ -123,12 +128,12 @@ public class User {
     // Data persistence methods. Save and load user data. Use serialization and deserialization. Linked to DataManager.
 
     // Method to save user data.
-    public void saveUserData() {
+    public void saveUserData() throws IOException {
         DataManager.saveUserData(this);
     }
 
     // Method to load user data.
-    public static User loadUserData(String username) {
+    public static User loadUserData(String username) throws IOException, ClassNotFoundException {
         return DataManager.loadUserData(username);
     }
 
@@ -150,7 +155,7 @@ public class User {
     // Hashcode method.
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(username, albums);
+        return Objects.hash(username, albums);
     }
 
     // toString method.

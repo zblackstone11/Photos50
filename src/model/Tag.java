@@ -1,5 +1,8 @@
 package model;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 // Represents a tag with properties like tag name and value (e.g., "location", "New York"). 
 // Might have methods for editing the tag value.
 
@@ -7,9 +10,10 @@ package model;
 //Diffrent tag names we could have: location, person, aspect ratio
 //All tags are opitoal but I thinbk we should have a Stock boolean that is necessary for all 
 
-public class Tag {
+public class Tag implements Serializable {
 
     // First some fields including the tag name and value.
+    private static final long serialVersionUID = 1L;
     private String tagName; // location, person, aspect ratio etc
     private String tagValue; // New York, John Doe, 16:9 etc
 
@@ -65,7 +69,7 @@ public class Tag {
 
     // Hashcode method.
     public int hashCode() {
-        return java.util.Objects.hash(tagName, tagValue);
+        return Objects.hash(tagName, tagValue);
     }
 
     // toString method.

@@ -1,32 +1,38 @@
 package model;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Objects;
+
 // Represents a photo with properties such as file path, date of the photo (last modification date), caption, and a list of 
 // tags. Methods could include adding/removing tags and updating the caption.
 
-public class Photo {
+public class Photo implements Serializable {
 
     // First some fields including the file path, date of the photo using java.time package, caption, and a list of tags.
+    private static final long serialVersionUID = 1L;
     private String filePath;
-    private java.time.LocalDate date;
+    private LocalDate date;
     private String caption;
-    private java.util.ArrayList<Tag> tags;
+    private ArrayList<Tag> tags;
 
     // Constructors: one that takes just the file path, and one that takes all fields.
 
     // Constructor that takes just the file path.
     public Photo(String filePath) {
         this.filePath = filePath;
-        this.date = java.time.LocalDate.now(); // might need to change this to get the photos last modified date
+        this.date = LocalDate.now(); // might need to change this to get the photos last modified date
         this.caption = "";
-        this.tags = new java.util.ArrayList<Tag>();
+        this.tags = new ArrayList<Tag>();
     }
 
     // Constructor that takes all fields.
-    public Photo(String filePath, java.time.LocalDate date, String caption, java.util.ArrayList<Tag> tags) {
+    public Photo(String filePath, LocalDate date, String caption, ArrayList<Tag> tags) {
         this.filePath = filePath;
         this.date = date;
         this.caption = caption;
-        this.tags = new java.util.ArrayList<>(tags); // make a copy of the list
+        this.tags = new ArrayList<>(tags); // make a copy of the list
     }
 
     // Space to add more constructors if needed. Maybe one that takes just the file path and date/caption/tags
@@ -44,12 +50,12 @@ public class Photo {
     }
 
     // Getter for date.
-    public java.time.LocalDate getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
     // Setter for date.
-    public void setDate(java.time.LocalDate date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -64,12 +70,12 @@ public class Photo {
     }
 
     // Getter for tags.
-    public java.util.ArrayList<Tag> getTags() {
+    public ArrayList<Tag> getTags() {
         return tags;
     }
 
     // Setter for tags.
-    public void setTags(java.util.ArrayList<Tag> tags) {
+    public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;
     }
 
@@ -112,7 +118,7 @@ public class Photo {
 
     // Hashcode method.
     public int hashCode() {
-        return java.util.Objects.hash(filePath, date);
+        return Objects.hash(filePath, date);
     }
 
     // toString method. This will be useful for debugging.
