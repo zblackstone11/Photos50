@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.io.IOException;
 
@@ -98,7 +98,7 @@ public class User implements Serializable {
     }
 
     // Method to get albums by date range.
-    public List<Album> getAlbumsByDateRange(LocalDate startDate, LocalDate endDate) {
+    public List<Album> getAlbumsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         List<Album> matchingAlbums = new ArrayList<>();
         for (Album album : albums) {
             for (Photo photo : album.getPhotos()) {

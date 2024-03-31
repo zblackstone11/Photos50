@@ -1,7 +1,7 @@
 package model;
 
 import java.util.ArrayList;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,8 +16,8 @@ public class Album implements Serializable {
     private static final long serialVersionUID = 1L;
     private String name;
     private ArrayList<Photo> photos;
-    private final LocalDate dateCreated;
-    private LocalDate dateModified;
+    private final LocalDateTime dateCreated;
+    private LocalDateTime dateModified;
 
     // Constructors: one that takes just the name, and one that takes name and photos.
 
@@ -25,16 +25,16 @@ public class Album implements Serializable {
     public Album(String name) {
         this.name = name;
         this.photos = new ArrayList<Photo>();
-        this.dateCreated = LocalDate.now();
-        this.dateModified = LocalDate.now();
+        this.dateCreated = LocalDateTime.now();
+        this.dateModified = LocalDateTime.now();
     }
 
     // Constructor that takes name and photos.
     public Album(String name, java.util.ArrayList<Photo> photos) {
         this.name = name;
         this.photos = new ArrayList<>(photos); // make a copy of the list
-        this.dateCreated = LocalDate.now();
-        this.dateModified = LocalDate.now();
+        this.dateCreated = LocalDateTime.now();
+        this.dateModified = LocalDateTime.now();
     }
 
     // Getters and setters for all fields.
@@ -60,17 +60,17 @@ public class Album implements Serializable {
     }
 
     // Getter for dateCreated.
-    public LocalDate getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
     // Getter for dateModified.
-    public LocalDate getDateModified() {
+    public LocalDateTime getDateModified() {
         return dateModified;
     }
 
     // Setter for dateModified.
-    public void setDateModified(LocalDate dateModified) {
+    public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
     }
 
@@ -79,7 +79,7 @@ public class Album implements Serializable {
     // Method to add a photo to the album.
     public void addPhoto(Photo photo) {
         photos.add(photo);
-        dateModified = LocalDate.now();
+        dateModified = LocalDateTime.now();
     }
 
     // Method to remove a photo from the album.
@@ -89,7 +89,7 @@ public class Album implements Serializable {
             return;
         }
         photos.remove(photo);
-        dateModified = LocalDate.now();
+        dateModified = LocalDateTime.now();
     }
 
     // Method to get the list of photos in the album.
@@ -174,7 +174,7 @@ public class Album implements Serializable {
     }
 
     // Photo retrieval method to get all photos taken within a certain date range.
-    public ArrayList<Photo> getPhotosInDateRange(LocalDate startDate, LocalDate endDate) {
+    public ArrayList<Photo> getPhotosInDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         ArrayList<Photo> photosInDateRange = new ArrayList<>();
         for (Photo p : photos) {
             if (p.getDate().isAfter(startDate) && p.getDate().isBefore(endDate)) {
