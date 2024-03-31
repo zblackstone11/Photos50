@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.io.IOException;
@@ -16,6 +17,17 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String username;
     private ArrayList<Album> albums;
+    private Set<String> customTagTypes;
+
+    // Method to add a custom tag type
+    public void addCustomTagType(String tagType) {
+        customTagTypes.add(tagType);
+    }
+
+    // Method to get all custom tag types
+    public Set<String> getCustomTagTypes() {
+        return customTagTypes;
+    }
 
     // Constructor that takes just the username.
     public User(String username) {

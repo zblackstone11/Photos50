@@ -90,7 +90,12 @@ public class Photo implements Serializable {
     // Tag management methods. Add a tag, remove a tag, and update a tag.
 
     // Method to add a tag.
+    // Need to check that its not already in the list, we don't allow the same tag to be added twice.
     public void addTag(Tag tag) {
+        // If the tag is already in the list, throw an exception.
+        if (tags.contains(tag)) {
+            throw new IllegalArgumentException("Tag already in the list.");
+        }
         tags.add(tag);
     }
 
