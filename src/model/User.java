@@ -18,6 +18,12 @@ public class User implements Serializable {
     private String username;
     private ArrayList<Album> albums;
     private Set<String> customTagTypes;
+    // private boolean isAdmin = false;
+
+    // Method to check if user is admin
+    public boolean isAdmin() {
+        return "admin".equals(this.username);
+    }
 
     // Method to add a custom tag type
     public void addCustomTagType(String tagType) {
