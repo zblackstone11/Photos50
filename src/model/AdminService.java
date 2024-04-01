@@ -19,7 +19,7 @@ public class AdminService {
     }
 
     // Method to create a new user
-    public boolean createUser(User adminUser, String newUsername) {
+    public static boolean createUser(User adminUser, String newUsername) {
         if (!adminUser.isAdmin()) {
             return false;
         }
@@ -34,7 +34,7 @@ public class AdminService {
     }
 
     // Method to delete an existing user
-    public boolean deleteUser(User adminUser, String usernameToDelete) {
+    public static boolean deleteUser(User adminUser, String usernameToDelete) {
         if (!adminUser.isAdmin()) {
             return false;
         }

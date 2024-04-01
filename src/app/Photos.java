@@ -1,39 +1,6 @@
 package app;
 
-// Just a test class to see if JavaFX is working, will host main function later too though
-// The main class that launches the JavaFX application. It sets up the primary stage and loads the initial scene.
-
-//Tested and works 
-
-/*import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
-public class Photos extends Application {
-
-    @Override
-    public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Say 'Hello, JavaFX'");
-        btn.setOnAction(e -> System.out.println("Hello, JavaFX"));
-
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-
-        Scene scene = new Scene(root, 300, 250);
-
-        primaryStage.setTitle("JavaFX Hello World");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-}
-*/
+// The main class for the application. This class is responsible for starting the application and initializing the stock user.
 
 import model.*;
 import java.io.IOException;
@@ -66,6 +33,7 @@ public class Photos extends Application {
     public static void main(String[] args) {
         // Initialize the application
         initializeStockUser();
+        initializeAdminUser();
         launch(args); // Launch the JavaFX application
 
         // Continue with application startup (showing UI, loading other users, etc.)
@@ -91,7 +59,20 @@ public class Photos extends Application {
         }
     }
     
-    
+    // method to initialize the admin user
+    private static void initializeAdminUser() {
+        User adminUser = DataManager.loadUserData("admin");
+        if (adminUser == null) {
+            // "admin" user doesn't exist, so initialize it
+            adminUser = new User("admin");
+            // Save the newly initialized "admin" user
+            try {
+                DataManager.saveUserData(adminUser);
+            } catch (IOException e) {
+                e.printStackTrace(); // replace with showErrorDialog("An error occurred: " + e.getMessage());
+            }
+        }
+    }
 
     private static void loadStockPhotos(Album stockAlbum) {
         // Implement loading of stock photos from the data directory into the stockAlbum
