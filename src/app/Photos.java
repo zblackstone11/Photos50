@@ -16,7 +16,7 @@ public class Photos extends Application {
     public void start(Stage primaryStage) {
         try {
             // Load the FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml")); // Ensure the path is correct
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
             Parent root = loader.load();
 
             // Set up the scene

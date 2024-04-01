@@ -38,7 +38,7 @@ public class DataManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // Suppress unchecked cast warning for deserialization operation 
     private static void loadUsersMap() {
         File file = new File(getUsersMapFilePath());
         if (file.exists()) {

@@ -75,6 +75,7 @@ public class AdminViewController {
         dialog.setTitle("Create New User");
         dialog.setHeaderText(null);
         dialog.setContentText("Please enter username for new user:");
+        // If username is already in use, show an error message
 
         // Show the dialog and capture the result
         Optional<String> result = dialog.showAndWait();
