@@ -3,48 +3,61 @@ package model;
 import java.io.*;
 // A class dedicated to handling data persistence, such as loading and saving user data, albums, and photos. 
 // This class could utilize serialization to manage user sessions and their corresponding data.
+import java.util.Map;
+import java.util.HashMap;
 
 public class DataManager {
     // Core responsibilities: saving and loading user data, albums, and photos.
 
     // Constants
     private static final String DATA_DIR = "data";
-    private static final String USER_DATA_FILE_PREFIX = "user_"; // Prefix for user data files
+    private static final String USER_MAP_FILE = "users.dat";
+    private static Map<String, User> usersMap = new HashMap<>(); // In-memory storage of users
 
-    // Save user data to a file. This method serializes the User object to a file.
+    static {
+        // Load the user map when the class is first accessed
+        loadUsersMap();
+    }
+
     public static void saveUserData(User user) throws IOException {
         checkAndCreateDataDir();
-        String userFilePath = getUserDataFilePath(user.getUsername());
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(userFilePath))) {
-            oos.writeObject(user);
+        usersMap.put(user.getUsername(), user); // Update the in-memory map
+        saveUsersMap(); // Persist the updated map
+    }
+
+    public static User loadUserData(String username) {
+        return usersMap.get(username); // Retrieve the user from the in-memory map
+    }
+    public static Map<String, User> getUsersMap() {
+        return new HashMap<>(usersMap); // Return a copy to avoid external modifications
+    }
+
+    public static void saveUsersMap() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getUsersMapFilePath()))) {
+            oos.writeObject(usersMap);
         }
     }
 
-    // Load user data from a file. This method deserializes the User object from a file.
-    public static User loadUserData(String username) throws IOException, ClassNotFoundException {
-        String userFilePath = getUserDataFilePath(username);
-        File userFile = new File(userFilePath);
-        if (!userFile.exists()) {
-            return null; // or throw an exception, decide later
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(userFilePath))) {
-            return (User) ois.readObject();
+    @SuppressWarnings("unchecked")
+    private static void loadUsersMap() {
+        File file = new File(getUsersMapFilePath());
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                usersMap = (Map<String, User>) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace(); // Consider a more robust error handling
+            }
         }
     }
 
-    // Utility methods
-    // Check if the data directory exists, and create it if it doesn't.
+    private static String getUsersMapFilePath() {
+        return DATA_DIR + File.separator + USER_MAP_FILE;
+    }
+
     private static void checkAndCreateDataDir() {
         File dataDir = new File(DATA_DIR);
         if (!dataDir.exists()) {
             dataDir.mkdir();
         }
     }
-
-    // Get the file path for a user's data file.
-    private static String getUserDataFilePath(String username) {
-        return DATA_DIR + File.separator + USER_DATA_FILE_PREFIX + username + ".dat";
-    }
-    
 }

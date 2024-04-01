@@ -1,50 +1,56 @@
 package model;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AdminService {
 
     // Method to list all users
     public List<User> listUsers(User adminUser) {
         if (!adminUser.isAdmin()) {
-            System.out.println("User does not have admin privileges."); // handle differently later
+            System.out.println("User does not have admin privileges."); // CHANGE TO GUI HANDLING LATER
             return null; // Or an empty list to indicate no action taken
         }
         // Logic to list all users
-        // For example, this could return a list of usernames or User objects depending on your design
-        // Return the list of users
-        return null;
+        Map<String, User> userMap = DataManager.getUsersMap();
+        return new ArrayList<>(userMap.values()); // Convert map values to a list and return
     }
 
     // Method to create a new user
     public boolean createUser(User adminUser, String newUsername) {
         if (!adminUser.isAdmin()) {
-            System.out.println("User does not have admin privileges.");
-            return false; // Action not completed
+            return false;
         }
-        // Logic to create a new user
-        // Return true if the user was successfully created
-        // Use the constuctor of the User class to create a new user
-        
         User newUser = new User(newUsername);
-        // Save the user data using the DataManager class
-
-        // Return true if the user was successfully created
-        return true;
+        try {
+            DataManager.saveUserData(newUser);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace(); // Change to GUI handling later
+            return false;
+        }
     }
 
     // Method to delete an existing user
     public boolean deleteUser(User adminUser, String usernameToDelete) {
         if (!adminUser.isAdmin()) {
-            System.out.println("User does not have admin privileges.");
-            return false; // Action not completed
+            return false;
         }
-        // Logic to delete the user
-        // Return true if the user was successfully deleted
-        // Use the DataManager class to delete the user data file
-        usernameToDelete = null;
-        // Return true if the user was successfully deleted
-        return true;
+
+        Map<String, User> usersMap = DataManager.getUsersMap();
+        if (usersMap.containsKey(usernameToDelete)) {
+            usersMap.remove(usernameToDelete);
+            try {
+                DataManager.saveUsersMap();
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
 
     // Additional helper methods or services to interact with data storage for user management might be needed.
