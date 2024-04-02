@@ -30,7 +30,7 @@ public class Photos extends Application {
         }
     }
     public static void main(String[] args) {
-        // Initialize the application
+        // Initialize the application data (users, albums, photos, etc.) and stock user and admin user
         DataManager.initializeData();
         initializeStockUser();
         initializeAdminUser();

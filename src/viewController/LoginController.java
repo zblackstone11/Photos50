@@ -30,7 +30,7 @@ public class LoginController {
             return;
         }
 
-        if ("admin".equals(username)) {
+        if ("admin".equals(username.toLowerCase())) {
             // Handle admin login
             openAdminView();
         } else {

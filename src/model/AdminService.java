@@ -1,5 +1,7 @@
 package model;
 
+// Helper class for admin operations
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

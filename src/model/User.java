@@ -19,7 +19,7 @@ public class User implements Serializable {
 
     // Method to check if user is admin
     public boolean isAdmin() {
-        return "admin".equals(this.username);
+        return "admin".equals(this.username.toLowerCase());
     }
 
     // Constructor that takes just the username.
