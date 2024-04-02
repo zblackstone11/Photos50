@@ -30,7 +30,6 @@
             </padding>
             <Label text="Photos in Album"/>
             <ListView fx:id="photoListView">
-                <!-- Custom cell factory to display thumbnails and captions -->
             </ListView>
         </VBox>
     </center>
