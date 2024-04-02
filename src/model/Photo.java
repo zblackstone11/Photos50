@@ -1,5 +1,7 @@
 package model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import javafx.scene.image.Image;
 
 // Represents a photo with properties such as file path, date of the photo (last modification date), caption, and a list of 
 // tags. Methods could include adding/removing tags and updating the caption.
@@ -22,6 +26,8 @@ public class Photo implements Serializable {
     private LocalDateTime dateTaken;
     private String caption;
     private ArrayList<Tag> tags;
+    private final int THUMBNAIL_WIDTH = 100; // Width for the thumbnail
+    private final int THUMBNAIL_HEIGHT = 100; // Height for the thumbnail
 
     // Constructors: one that takes just the file path
 
@@ -85,6 +91,17 @@ public class Photo implements Serializable {
     // Setter for tags.
     public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;
+    }
+
+    // Method to get the thumbnail of the photo.
+    public Image getThumbnail() {
+        try {
+            Image image = new Image(new FileInputStream(filePath), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, true, true);
+            return image;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Tag management methods. Add a tag, remove a tag, and update a tag.

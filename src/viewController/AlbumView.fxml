@@ -1,1 +1,45 @@
-Defines the UI for viewing an album's contents, including thumbnails of photos and options for managing them.
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.AlbumViewController">
+    <top>
+        <HBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="Add Photo" onAction="#handleAddPhoto"/>
+            <Button text="Remove Photo" onAction="#handleRemovePhoto"/>
+            <Button text="Caption/Recaption" onAction="#handleCaptionPhoto"/>
+            <Button text="Display Photo" onAction="#handleDisplayPhoto"/>
+            <Button text="Add Tag" onAction="#handleAddTag"/>
+            <Button text="Delete Tag" onAction="#handleDeleteTag"/>
+            <Button text="Copy Photo" onAction="#handleCopyPhoto"/>
+            <Button text="Move Photo" onAction="#handleMovePhoto"/>
+            <Button text="Slideshow" onAction="#handleSlideshow"/>
+            <Button text="Logout" onAction="#handleLogout"/>
+            <Button text="Quit" onAction="#handleQuit"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Label text="Photos in Album"/>
+            <ListView fx:id="photoListView">
+                <!-- Custom cell factory to display thumbnails and captions -->
+            </ListView>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="Back to Albums" onAction="#handleBackToAlbums"/>
+        </HBox>
+    </bottom>
+</BorderPane>

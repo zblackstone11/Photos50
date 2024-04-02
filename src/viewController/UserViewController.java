@@ -185,14 +185,50 @@ public class UserViewController {
 
     @FXML
     private void handleOpenAlbum() {
-        // Logic to handle open album action
-        // Example: Navigate to the album view, displaying photos and details of the selected album
+        // Get the selected album from the TableView
+        Album selectedAlbum = albumsTableView.getSelectionModel().getSelectedItem();
+
+        // Check if an album is selected
+        if (selectedAlbum == null) {
+            showErrorDialog("Please select an album to open.");
+            return;
+        }
+
+        // Navigate to the AlbumView, passing the selected album and the current user
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/AlbumView.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for AlbumView and set the album and user
+            AlbumViewController controller = loader.getController();
+            controller.setAlbumAndUser(selectedAlbum, currentUser);
+
+            // Create and display the new stage
+            Stage stage = new Stage();
+            stage.setTitle("Album: " + selectedAlbum.getName());
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Close the current UserView window
+            Stage currentStage = (Stage) albumsTableView.getScene().getWindow();
+            currentStage.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showErrorDialog("Error opening album view: " + e.getMessage());
+            }
     }
 
     @FXML
     private void handleSearchPhotos() {
         // Logic to handle search photos action
-        // Example: Navigate to the search view, allowing the user to specify search criteria
+        // Example: Navigate to the search view, allowing the user to specify search criteria.
+        // Need to be able to search all user albums by a date range
+        // Need to be able to search all user albums by a single tag value pair i.e. location=New York
+        // Need to be able to search all user albums by multiple tag value pairs i.e. location=New York AND person=John
+        // Need to be able to search all user albums by a disjunctive tag value pair i.e. location=New York OR location=Los Angeles
+        // Only conjunctions and disjunctions of up to 2 tags values pairs are allowed
+        // Search will need to list or display all photos that match the search criteria
+        // And then functionality to create an album from the search results
     }
 
     // Additional methods as needed for the controller
