@@ -2,10 +2,12 @@ package viewController;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import model.Album;
 import model.DataManager;
+import model.Photo;
 import model.User;
 
 public class UserViewController {
@@ -26,17 +28,23 @@ public class UserViewController {
 
     @FXML
     public void initialize() {
-        // Initialization logic here
-        // Example: Load current user and populate albums table
-        currentUser = DataManager.loadUserData("stock"); // Replace with actual logic to determine the current user
-        populateAlbumsTable();
+        // Set the cell value factories for the table columns
+        albumNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        numPhotosColumn.setCellValueFactory(new PropertyValueFactory<>("numPhotos"));
+        dateRangeColumn.setCellValueFactory(new PropertyValueFactory<>("dateRange"));
+
+        // No need to populate the table here, as setCurrentUser will be called after the controller is initialized
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+        populateAlbumsTable(); // This will populate the table once the current user is set
     }
 
     private void populateAlbumsTable() {
         if (currentUser != null) {
+            // Add albums to the table view
             albumsTableView.getItems().setAll(currentUser.getAlbums());
-            // Further setup if necessary, e.g., formatting the date range
-            // Album class has methods to get the date range and number of photos
         }
     }
 

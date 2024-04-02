@@ -64,7 +64,7 @@ public class LoginController {
         }
     }
 
-    // Method to open the general user view
+    /* // Method to open the general user view
     private void openUserView(User user) {
         // Code to switch to the user view, passing in the user object
         // This could be similar to the openAdminView method'
@@ -72,6 +72,33 @@ public class LoginController {
             // Load the FXML file for the UserView
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
             Parent root = loader.load();
+
+            // Get the current stage (from the login button, for example)
+            Stage currentStage = (Stage) usernameField.getScene().getWindow();
+
+            // Set the user view to the current stage
+            currentStage.setTitle("User Dashboard");
+            currentStage.setScene(new Scene(root, 800, 600));
+            currentStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle IOException, such as showing an error dialog
+        }
+    }
+    */
+
+    // Method to open the general user view
+    private void openUserView(User user) {
+        try {
+            // Load the FXML file for the UserView
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            Parent root = loader.load();
+
+            // Get the UserViewController from the loader
+            UserViewController userViewController = loader.getController();
+            
+            // Set the current user in the UserViewController
+            userViewController.setCurrentUser(user);
 
             // Get the current stage (from the login button, for example)
             Stage currentStage = (Stage) usernameField.getScene().getWindow();
