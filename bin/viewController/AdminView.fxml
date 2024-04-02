@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.AdminViewController">
     <top>
@@ -20,9 +22,12 @@
     </top>
     <center>
         <TableView fx:id="userTableView">
-            <columns>
-                <TableColumn fx:id="usernameColumn" text="Username" />
-                <!-- Add more columns as needed -->
+            <columns>  
+                <TableColumn fx:id="usernameColumn" text="Username">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="username"/>
+                    </cellValueFactory>
+                </TableColumn>
             </columns>
         </TableView>
     </center>

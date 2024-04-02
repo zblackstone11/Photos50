@@ -39,6 +39,7 @@ public class Photos extends Application {
         // Continue with application startup (showing UI, loading other users, etc.)
     }
 
+    // method to initialize the stock user
     private static void initializeStockUser() {
         User stockUser = DataManager.loadUserData("stock");
         if (stockUser == null) {
@@ -74,10 +75,8 @@ public class Photos extends Application {
         }
     }
 
+    // method to load stock photos into the stock album
     private static void loadStockPhotos(Album stockAlbum) {
-        // Implement loading of stock photos from the data directory into the stockAlbum
-        // The stock photos are stored in the data directory
-        // Make photo objects and add them to the stockAlbum using stockAlbum.addPhoto(photo)
 
         Photo photo1 = new Photo("data/Avatar.jpeg");
         photo1.setCaption("Avatar");

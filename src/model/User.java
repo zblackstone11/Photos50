@@ -51,7 +51,7 @@ public class User implements Serializable {
 
     // Getter for username.
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     // Setter for username.

@@ -25,6 +25,11 @@ public class AdminViewController {
     private TableView<User> userTableView;
 
     @FXML
+        private void initialize() {
+            refreshUserListView();
+        }
+
+    @FXML
     private void handleLogout() {
     // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
@@ -100,43 +105,30 @@ public class AdminViewController {
 
     // Refresh the TableView or ListView that displays users
     private void refreshUserListView() {
-        // Implementation depends on how you've set up your TableView or ListView
-        // For example, you might need to clear the items and add them again from DataManager.getUsersMap()
-    }
+        userTableView.getItems().clear(); // Clear the existing items in the TableView
+        DataManager.getUsersMap().values().forEach(user -> userTableView.getItems().add(user)); // Add all current users to the TableView
+    }    
 
     @FXML
     private void handleDeleteSelectedUser() {
-        // Get the selected user from the TableView
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
-
         if (selectedUser == null) {
-            // No user selected, show an error message or do nothing
             showErrorDialog("No user selected.");
             return;
         }
-
-        // Confirm the deletion
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the user " + selectedUser.getUsername() + "?", ButtonType.YES, ButtonType.NO);
         confirmAlert.setHeaderText("Confirm Deletion");
         Optional<ButtonType> result = confirmAlert.showAndWait();
-
         if (result.isPresent() && result.get() == ButtonType.YES) {
-            // Assuming adminUser is the currently logged-in admin User object
             boolean success = AdminService.deleteUser(DataManager.loadUserData("admin"), selectedUser.getUsername());
-            
             if (success) {
-                // Deletion successful, remove the user from the TableView
-                userTableView.getItems().remove(selectedUser);
-                // Optionally, refresh the list or TableView if necessary
-                refreshUserListView();
+                refreshUserListView(); // Refresh the list view to reflect the changes
             } else {
-                // Deletion failed, show an error message
                 showErrorDialog("Failed to delete the user.");
             }
         }
-    }
-
-
+    }    
+    
     private void openLoginWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));

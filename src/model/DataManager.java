@@ -28,6 +28,7 @@ public class DataManager {
     public static User loadUserData(String username) {
         return usersMap.get(username); // Retrieve the user from the in-memory map
     }
+    
     public static Map<String, User> getUsersMap() {
         return new HashMap<>(usersMap); // Return a copy to avoid external modifications
     }

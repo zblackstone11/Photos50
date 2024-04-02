@@ -38,7 +38,6 @@ public class AdminService {
         if (!adminUser.isAdmin()) {
             return false;
         }
-
         Map<String, User> usersMap = DataManager.getUsersMap();
         if (usersMap.containsKey(usernameToDelete)) {
             usersMap.remove(usernameToDelete);
