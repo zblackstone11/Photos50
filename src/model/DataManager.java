@@ -1,8 +1,6 @@
 package model;
 
 import java.io.*;
-// A class dedicated to handling data persistence, such as loading and saving user data, albums, and photos. 
-// This class could utilize serialization to manage user sessions and their corresponding data.
 import java.util.Map;
 import java.util.HashMap;
 

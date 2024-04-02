@@ -3,10 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.time.LocalDateTime;
 import java.io.Serializable;
-import java.io.IOException;
 
 // Represents a user with properties like username, list of albums, and possibly a password. 
 // Methods might involve album management (add, delete, rename).

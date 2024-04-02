@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.UserViewController">
+    <top>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="Logout" fx:id="logoutButton" onAction="#handleLogout"/>
+            <Button text="Quit" fx:id="quitButton" onAction="#handleQuit"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+             </padding>
+            <Label text="Your Albums"/>
+            <TableView fx:id="albumsTableView">
+                <columns>
+                    <TableColumn text="Album Name" fx:id="albumNameColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="name"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Number of Photos" fx:id="numPhotosColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="photosSize"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Date Range" fx:id="dateRangeColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="dateRange"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER" fx:id="bottomHBox">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="Create Album" fx:id="createAlbumButton" onAction="#handleCreateAlbum"/>
+            <Button text="Delete Album" fx:id="deleteAlbumButton" onAction="#handleDeleteAlbum"/>
+            <Button text="Rename Album" fx:id="renameAlbumButton" onAction="#handleRenameAlbum"/>
+            <Button text="Open Album" fx:id="openAlbumButton" onAction="#handleOpenAlbum"/>
+            <Button text="Search Photos" fx:id="searchPhotosButton" onAction="#handleSearchPhotos"/>
+        </HBox>
+    </bottom>
+</BorderPane>

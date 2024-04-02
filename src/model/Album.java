@@ -107,6 +107,32 @@ public class Album implements Serializable {
         return "Album name: " + name + "\nDate created: " + dateCreated + "\nDate last modified: " + dateModified;
     }
 
+    // Methods for getting the number of photos in the album and determining the range of dates of the photos.
+
+    // Method to get the number of photos in the album.
+    public int getNumPhotos() {
+        return photos.size();
+    }
+
+    // Method to get the range of dates of the photos in the album.
+    public String getDateRange() {
+        if (photos.isEmpty()) {
+            return "N/A";
+        }
+        LocalDateTime earliest = photos.get(0).getDate();
+        LocalDateTime latest = photos.get(0).getDate();
+        for (Photo p : photos) {
+            if (p.getDate().isBefore(earliest)) {
+                earliest = p.getDate();
+            }
+            if (p.getDate().isAfter(latest)) {
+                latest = p.getDate();
+            }
+        }
+        return "Earliest: " + earliest + "\nLatest: " + latest;
+    }
+
+
     // Equals and hashcode methods.
 
     // Equals method.
