@@ -60,6 +60,16 @@ public class User implements Serializable {
         }
     }
 
+    // Method to check if album exists taking a string name.
+    public boolean albumExists(String name) {
+        for (Album album : albums) {
+            if (album.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Method to remove an album from the list of albums.
     public void deleteAlbum(Album album) {
         albums.remove(album);
