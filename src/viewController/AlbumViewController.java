@@ -65,5 +65,64 @@ public class AlbumViewController {
         }
     }
 
-    // Other methods for handling user actions in the AlbumView...
+    @FXML
+    private void handleAddPhoto() {
+        // Logic for adding a photo to the current album
+    }
+
+    @FXML
+    private void handleRemovePhoto() {
+        // Logic for removing a selected photo from the current album
+    }
+
+    @FXML
+    private void handleCaptionPhoto() {
+        // Logic for captioning or recaptioning a selected photo
+    }
+
+    @FXML
+    private void handleDisplayPhoto() {
+        // Logic for displaying a selected photo in a larger view or separate window
+    }
+
+    @FXML
+    private void handleAddTag() {
+        // Logic for adding a tag to a selected photo
+    }
+
+    @FXML
+    private void handleDeleteTag() {
+        // Logic for deleting a tag from a selected photo
+    }
+
+    @FXML
+    private void handleCopyPhoto() {
+        // Logic for copying a selected photo to another album
+    }
+
+    @FXML
+    private void handleMovePhoto() {
+        // Logic for moving a selected photo to another album
+    }
+
+    @FXML
+    private void handleSlideshow() {
+        // Logic for starting a slideshow of the photos in the current album
+    }
+
+    @FXML
+    private void handleLogout() {
+        // Logic for logging out the current user and returning to the login view
+    }
+
+    @FXML
+    private void handleQuit() {
+        // Logic for quitting the application
+    }
+
+    @FXML
+    private void handleBackToAlbums() {
+        // Logic for returning to the user's album view
+    }
+    
 }
