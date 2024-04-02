@@ -1,12 +1,23 @@
 package viewController;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.Album;
+import model.DataManager;
 import model.Photo;
 import model.User;
 
@@ -67,7 +78,33 @@ public class AlbumViewController {
 
     @FXML
     private void handleAddPhoto() {
-        // Logic for adding a photo to the current album
+        // Create a FileChooser to let the user select a photo
+        FileChooser fileChooser = new FileChooser();
+
+        // Set the title for the FileChooser
+        fileChooser.setTitle("Select Photo");
+
+        // Set the initial directory, e.g., user's home or any specific path
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        // Filter to only show image files
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Image Files", "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png")
+        );
+
+        // Show open file dialog and get the selected file
+        File file = fileChooser.showOpenDialog(null);
+
+        if (file != null) {
+            // Create a new Photo object from the selected file
+            Photo newPhoto = new Photo(file.getAbsolutePath());
+
+            // Add the photo to the current album
+            selectedAlbum.addPhoto(newPhoto);
+
+            // Update the photo list view to include the new photo
+            photoListView.getItems().setAll(selectedAlbum.getPhotos());
+        }
     }
 
     @FXML
@@ -111,18 +148,77 @@ public class AlbumViewController {
     }
 
     @FXML
-    private void handleLogout() {
-        // Logic for logging out the current user and returning to the login view
-    }
-
-    @FXML
     private void handleQuit() {
-        // Logic for quitting the application
+        // Save the current state before quitting
+        DataManager.saveUserData(currentUser);
+
+        // Close the current album view window
+        Stage currentStage = (Stage) photoListView.getScene().getWindow();
+        currentStage.close();
     }
 
     @FXML
     private void handleBackToAlbums() {
-        // Logic for returning to the user's album view
+        // Save the current user's data first
+        DataManager.saveUserData(currentUser);
+
+        try {
+            // Load the FXML file for the UserView
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for the UserView and set the current user
+            UserViewController userViewController = loader.getController();
+            userViewController.setCurrentUser(currentUser);
+
+            // Set up the scene and stage
+            Stage stage = (Stage) photoListView.getScene().getWindow();
+            stage.setTitle("Your Albums");
+            stage.setScene(new Scene(root));
+
+            // Show the UserView window
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle IOException, such as showing an error dialog
+            showErrorDialog("Error opening user album view: " + e.getMessage());
+        }
     }
-    
+
+    @FXML
+    private void handleLogout() {
+        // Save the current state before logging out
+        DataManager.saveUserData(currentUser);
+
+        // Close the current album view window
+        Stage currentStage = (Stage) photoListView.getScene().getWindow();
+        currentStage.close();
+
+        // Open the login window
+        openLoginWindow();
+    }
+
+    private void openLoginWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Login");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            // Handle IOException, possibly with an error dialog
+            showErrorDialog("Error opening login window: " + e.getMessage());
+        }
+    }
+
+    // Method to show an error dialog
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    } 
 }
