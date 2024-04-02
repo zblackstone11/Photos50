@@ -77,9 +77,14 @@ public class Album implements Serializable {
     // Methods to add/remove photos, get the photo list, album metadata, equals and hashcode, toString, etc.
 
     // Method to add a photo to the album.
-    public void addPhoto(Photo photo) {
+    public boolean addPhoto(Photo photo) {
+        // Check if the photo is already in the album.
+        if (photos.contains(photo)) {
+            return false;
+        }
         photos.add(photo);
         dateModified = LocalDateTime.now();
+        return true;
     }
 
     // Method to remove a photo from the album.

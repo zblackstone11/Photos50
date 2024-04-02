@@ -17,22 +17,11 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String username;
     private ArrayList<Album> albums;
-    private Set<String> customTagTypes;
     // private boolean isAdmin = false;
 
     // Method to check if user is admin
     public boolean isAdmin() {
         return "admin".equals(this.username);
-    }
-
-    // Method to add a custom tag type
-    public void addCustomTagType(String tagType) {
-        customTagTypes.add(tagType);
-    }
-
-    // Method to get all custom tag types
-    public Set<String> getCustomTagTypes() {
-        return customTagTypes;
     }
 
     // Constructor that takes just the username.
@@ -64,23 +53,17 @@ public class User implements Serializable {
         return albums;
     }
 
-    // Setter for albums. Might drop this and just use addAlbum/removeAlbum methods.
-    public void setAlbums(ArrayList<Album> albums) {
-        this.albums = albums;
-    }
-
     // Methods like create album, delete album, rename album
 
     // Method to add an album to the list of albums.
-    // Change to check for duplicates since we are not allowing duplicate album names.
-    public void addAlbum(Album album) {
+    public void createAlbum(Album album) {
         if (!albums.contains(album)) {
             albums.add(album);
         }
     }
 
     // Method to remove an album from the list of albums.
-    public void removeAlbum(Album album) {
+    public void deleteAlbum(Album album) {
         albums.remove(album);
     }
 
@@ -88,6 +71,8 @@ public class User implements Serializable {
     public void renameAlbum(Album album, String newName) {
         album.setName(newName);
     }
+
+    // Method to open an album, for later with main user screen
 
     // Album retrieval methods
 
@@ -146,12 +131,12 @@ public class User implements Serializable {
     // Data persistence methods. Save and load user data. Use serialization and deserialization. Linked to DataManager.
 
     // Method to save user data.
-    public void saveUserData() throws IOException {
+    public void saveUserData() {
         DataManager.saveUserData(this);
     }
 
     // Method to load user data.
-    public static User loadUserData(String username) throws IOException, ClassNotFoundException {
+    public static User loadUserData(String username) {
         return DataManager.loadUserData(username);
     }
 

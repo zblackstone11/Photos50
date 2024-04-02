@@ -36,13 +36,7 @@ public class AdminViewController {
 
         // Iterate over the map and save each user's data
         for (User user : usersMap.values()) {
-            try {
-                DataManager.saveUserData(user);
-            } catch (IOException e) {
-                // Handle IOException, possibly with an error dialog
-                showErrorDialog("Error saving user data: " + e.getMessage());
-                return; // Exit method to avoid logging out if data wasn't saved properly
-            }
+            DataManager.saveUserData(user);
         }
         // Close the current admin window
         Stage currentStage = (Stage) userTableView.getScene().getWindow();
@@ -59,15 +53,8 @@ public class AdminViewController {
     
         // Iterate over the map and save each user's data
         for (User user : usersMap.values()) {
-            try {
-                DataManager.saveUserData(user);
-            } catch (IOException e) {
-                // Handle IOException, possibly with an error dialog
-                showErrorDialog("Error saving user data: " + e.getMessage());
-                return; // Exit method to avoid quitting if data wasn't saved properly
-            }
+            DataManager.saveUserData(user);
         }
-    
         // Close the entire application
         Stage primaryStage = (Stage) userTableView.getScene().getWindow();
         primaryStage.close();
@@ -88,7 +75,7 @@ public class AdminViewController {
             // Check if the username is not empty and create the user
             if (!username.trim().isEmpty()) {
                 // Assuming adminUser is the currently logged-in admin User object
-                boolean success = AdminService.createUser(DataManager.loadUserData("admin"), username);
+                boolean success = AdminService.createUser(username);
                 if (success) {
                     // Success, maybe refresh the user list view or show a confirmation
                     refreshUserListView();
@@ -103,12 +90,6 @@ public class AdminViewController {
         });
     }
 
-    // Refresh the TableView or ListView that displays users
-    private void refreshUserListView() {
-        userTableView.getItems().clear(); // Clear the existing items in the TableView
-        DataManager.getUsersMap().values().forEach(user -> userTableView.getItems().add(user)); // Add all current users to the TableView
-    }    
-
     @FXML
     private void handleDeleteSelectedUser() {
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
@@ -120,7 +101,7 @@ public class AdminViewController {
         confirmAlert.setHeaderText("Confirm Deletion");
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.YES) {
-            boolean success = AdminService.deleteUser(DataManager.loadUserData("admin"), selectedUser.getUsername());
+            boolean success = AdminService.deleteUser(selectedUser.getUsername());
             if (success) {
                 refreshUserListView(); // Refresh the list view to reflect the changes
             } else {
@@ -142,6 +123,12 @@ public class AdminViewController {
             showErrorDialog("Error opening login window: " + e.getMessage());
         }
     }
+
+    // Refresh the TableView or ListView that displays users
+    private void refreshUserListView() {
+        userTableView.getItems().clear(); // Clear the existing items in the TableView
+        DataManager.getUsersMap().values().forEach(user -> userTableView.getItems().add(user)); // Add all current users to the TableView
+    }    
 
     // Method to show an error dialog
     private void showErrorDialog(String message) {

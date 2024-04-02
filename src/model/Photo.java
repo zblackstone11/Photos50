@@ -23,7 +23,7 @@ public class Photo implements Serializable {
     private String caption;
     private ArrayList<Tag> tags;
 
-    // Constructors: one that takes just the file path, and one that takes all fields.
+    // Constructors: one that takes just the file path
 
     // Constructor that takes just the file path.
     public Photo(String filePath) {
@@ -90,29 +90,21 @@ public class Photo implements Serializable {
     // Tag management methods. Add a tag, remove a tag, and update a tag.
 
     // Method to add a tag.
-    // Need to check that its not already in the list, we don't allow the same tag to be added twice.
-    public void addTag(Tag tag) {
-        // If the tag is already in the list, throw an exception.
+    public boolean addTag(Tag tag) {
         if (tags.contains(tag)) {
-            throw new IllegalArgumentException("Tag already in the list.");
+            return false;
         }
         tags.add(tag);
+        return true;
     }
 
     // Method to remove a tag.
-    // Need error handling in case the tag is not in the list.
-    public void removeTag(Tag tag) {
-        // If the tag is not in the list, throw an exception.
+    public boolean deleteTag(Tag tag) {
         if (!tags.contains(tag)) {
-            throw new IllegalArgumentException("Tag not found in the list.");
+            return false;
         }
         tags.remove(tag);
-    }
-
-    // Method to update a tag.
-    public void updateTag(Tag oldTag, Tag newTag) {
-        tags.remove(oldTag);
-        tags.add(newTag);
+        return true;
     }
 
     // Equals and hashcode methods. Two photos are equal if their file paths are equal and their dates are equal.
@@ -134,13 +126,8 @@ public class Photo implements Serializable {
         return Objects.hash(filePath, dateTaken);
     }
 
-    // toString method. This will be useful for debugging.
-
     // toString method.
     public String toString() {
         return "Photo: " + filePath + ", Date: " + dateTaken + ", Caption: " + caption + ", Tags: " + tags;
     }
-
-    // Space for additional methods such as a method to get all tags as a string, a method to get all tags as a list of strings,
-
 }

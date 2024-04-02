@@ -8,7 +8,6 @@ import java.util.Objects;
 
 //SL
 //Diffrent tag names we could have: location, person, aspect ratio
-//All tags are opitoal but I thinbk we should have a Stock boolean that is necessary for all 
 
 public class Tag implements Serializable {
 
@@ -17,15 +16,7 @@ public class Tag implements Serializable {
     private String tagName; // location, person, aspect ratio etc
     private String tagValue; // New York, John Doe, 16:9 etc
 
-    // Constructors: one that takes just the tag name, and one that takes both.
-
-    // Constructor that takes just the tag name.
-    public Tag(String tagName) {
-        this.tagName = tagName;
-        this.tagValue = "";
-    }
-
-    // Constructor that takes both.
+    // Constructor that takes both the tag name and value.
     public Tag(String tagName, String tagValue) {
         this.tagName = tagName;
         this.tagValue = tagValue;
@@ -76,5 +67,4 @@ public class Tag implements Serializable {
     public String toString() {
         return tagName + ": " + tagValue;
     }
-    
 }

@@ -40,7 +40,7 @@ public class LoginController {
                 openUserView(user);
             } else {
                 // Handle case where user doesn't exist, maybe show an error or create a new user
-                showErrorDialog("User does not exist.");
+                showErrorDialog("User does not exist. Login to admin to create new user.");
             }
         }
     }
