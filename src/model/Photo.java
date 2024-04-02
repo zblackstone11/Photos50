@@ -124,6 +124,12 @@ public class Photo implements Serializable {
         return true;
     }
 
+    // Method to see if a photo has a tag of a certain type.
+    public boolean hasTagOfType(String tagType) {
+        return tags.stream().anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType));
+    }
+    
+
     // Equals and hashcode methods. Two photos are equal if their file paths are equal and their dates are equal.
 
     // Equals method.

@@ -1,7 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -15,7 +17,8 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String username;
     private ArrayList<Album> albums;
-    // private boolean isAdmin = false;
+    private Map<String, Integer> tagTypes; // Map to store tag types and their multiplicities
+
 
     // Method to check if user is admin
     public boolean isAdmin() {
@@ -26,12 +29,10 @@ public class User implements Serializable {
     public User(String username) {
         this.username = username;
         this.albums = new ArrayList<Album>();
-    }
-
-    // Constructor that takes username and albums.
-    public User(String username, ArrayList<Album> albums) {
-        this.username = username;
-        this.albums = new ArrayList<>(albums); // make a copy of the list
+        this.tagTypes = new HashMap<>(); // Initialize the map
+        // Prepopulate the map with default tag types and multiplicities
+        this.tagTypes.put("location", 1); // 'location' can have only one value
+        this.tagTypes.put("person", Integer.MAX_VALUE); // 'person' can have multiple values
     }
 
     // Getters and setters for all fields.
@@ -49,6 +50,21 @@ public class User implements Serializable {
     // Getter for albums.
     public ArrayList<Album> getAlbums() {
         return albums;
+    }
+
+    // Getter for tagTypes
+    public Map<String, Integer> getTagTypes() {
+        return tagTypes;
+    }
+
+    // Setter for tagTypes
+    public void setTagTypes(Map<String, Integer> tagTypes) {
+        this.tagTypes = tagTypes;
+    }
+
+    // Method to add a new tag type with its multiplicity
+    public void addTagType(String tagType, Integer multiplicity) {
+        this.tagTypes.put(tagType, multiplicity);
     }
 
     // Methods like create album, delete album, rename album

@@ -2,24 +2,33 @@ package viewController;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import model.Album;
 import model.DataManager;
 import model.Photo;
 import model.User;
+import model.Tag;
 
 public class AlbumViewController {
 
@@ -104,17 +113,64 @@ public class AlbumViewController {
 
             // Update the photo list view to include the new photo
             photoListView.getItems().setAll(selectedAlbum.getPhotos());
+
+            // Save the updated user data
+            DataManager.saveUserData(currentUser);
         }
     }
 
     @FXML
     private void handleRemovePhoto() {
-        // Logic for removing a selected photo from the current album
+        // Get the selected photo
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+
+        // Check if a photo is selected
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to remove.");
+            return;
+        }
+
+        // Confirm the action with the user
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to remove the selected photo?", ButtonType.YES, ButtonType.NO);
+        confirmAlert.setHeaderText("Confirm Photo Removal");
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            // Remove the photo from the album
+            selectedAlbum.removePhoto(selectedPhoto);
+
+            // Update the photo list view
+            photoListView.getItems().remove(selectedPhoto);
+
+            // Save the updated user data
+            DataManager.saveUserData(currentUser);
+        }
     }
 
     @FXML
     private void handleCaptionPhoto() {
-        // Logic for captioning or recaptioning a selected photo
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to caption.");
+            return;
+        }
+
+        TextInputDialog dialog = new TextInputDialog(selectedPhoto.getCaption());
+        dialog.setTitle("Caption Photo");
+        dialog.setHeaderText("Enter a new caption for the selected photo:");
+        dialog.setContentText("Caption:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(caption -> {
+            // Set the new caption and update the ListView
+            selectedPhoto.setCaption(caption);
+            photoListView.refresh();
+
+            // Save the updated user data
+            DataManager.saveUserData(currentUser);
+        });
     }
 
     @FXML
@@ -124,7 +180,119 @@ public class AlbumViewController {
 
     @FXML
     private void handleAddTag() {
-        // Logic for adding a tag to a selected photo
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+    
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to add a tag.");
+            return;
+        }
+    
+        // Get tag type and multiplicity
+        Pair<String, Integer> tagTypeAndMultiplicity = showTagTypeDialog();
+        if (tagTypeAndMultiplicity == null) {
+            return; // User canceled or entered an invalid tag type
+        }
+    
+        String tagType = tagTypeAndMultiplicity.getKey();
+        Integer multiplicity = tagTypeAndMultiplicity.getValue();
+    
+        // Now check if the tag type supports multiple values
+        if (multiplicity > 1 || !selectedPhoto.hasTagOfType(tagType)) {
+            // Get tag value
+            String tagValue = showTagValueDialog(tagType);
+            if (tagValue == null || tagValue.isBlank()) {
+                return; // User canceled or entered an invalid tag value
+            }
+    
+            // Add tag to the photo
+            Tag newTag = new Tag(tagType, tagValue);
+            if (selectedPhoto.addTag(newTag)) {
+                photoListView.refresh(); // Update the ListView to show the new tag
+                DataManager.saveUserData(currentUser); // Save changes
+            } else {
+                showErrorDialog("This tag already exists for the selected photo.");
+            }
+        } else {
+            showErrorDialog("This tag type only supports a single value, which already exists for this photo.");
+        }
+    }    
+    
+    private Pair<String, Integer> showTagTypeDialog() {
+        Map<String, Integer> tagTypes = currentUser.getTagTypes();
+        List<String> choices = new ArrayList<>(tagTypes.keySet());
+    
+        // First, ask if the user wants to add a new tag type
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Add New Tag Type");
+        alert.setHeaderText("Do you want to add a new tag type?");
+        alert.setContentText("Choose 'OK' to add a new tag type or 'Cancel' to select from existing ones.");
+    
+        Optional<ButtonType> response = alert.showAndWait();
+    
+        if (response.isPresent() && response.get() == ButtonType.OK) {
+            // User chose to add a new tag type
+            TextInputDialog newTypeDialog = new TextInputDialog();
+            newTypeDialog.setTitle("New Tag Type");
+            newTypeDialog.setHeaderText("Enter the new tag type:");
+            newTypeDialog.setContentText("Tag type:");
+    
+            Optional<String> newTypeResult = newTypeDialog.showAndWait();
+            if (newTypeResult.isPresent()) {
+                String newType = newTypeResult.get();
+                Integer multiplicity = askForMultiplicity(newType);
+                if (multiplicity != null) {
+                    // Add the new type and its multiplicity to the user's tag types
+                    tagTypes.put(newType, multiplicity);
+                    currentUser.setTagTypes(tagTypes);
+                    DataManager.saveUserData(currentUser);
+                    return new Pair<>(newType, multiplicity);
+                }
+            }
+        } else {
+            // User chose to select from existing tag types
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(null, choices);
+            dialog.setTitle("Select Tag Type");
+            dialog.setHeaderText("Select a tag type:");
+            dialog.setContentText("Tag type:");
+    
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                String selectedType = result.get();
+                return new Pair<>(selectedType, tagTypes.get(selectedType));
+            }
+        }
+    
+        return null; // User cancelled or did not enter valid input
+    }
+    
+    private Integer askForMultiplicity(String tagType) {
+        TextInputDialog multiplicityDialog = new TextInputDialog("1");
+        multiplicityDialog.setTitle("Tag Multiplicity");
+        multiplicityDialog.setHeaderText("Enter multiplicity for '" + tagType + "':");
+        multiplicityDialog.setContentText("Multiplicity:");
+    
+        Optional<String> result = multiplicityDialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                return Integer.parseInt(result.get());
+            } catch (NumberFormatException e) {
+                showErrorDialog("Invalid multiplicity. Please enter a number.");
+                return null;
+            }
+        }
+        return null; // User canceled
+    }    
+
+    private String showTagValueDialog(String tagType) {
+        // Create the dialog
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Tag Value");
+        dialog.setHeaderText("Enter the value for the tag type: " + tagType);
+        dialog.setContentText("Tag value:");
+    
+        // Show the dialog and capture the result
+        Optional<String> result = dialog.showAndWait();
+        return result.orElse(null); // Return the entered tag value or null if canceled
     }
 
     @FXML
