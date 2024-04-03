@@ -78,12 +78,13 @@ public class AlbumViewController {
      */
     private void initializeAlbumView() {
         // Set the custom cell factory for the photo list view
+        // Works by setting the graphic of the ListCell to a custom layout (HBox with ImageView and Text)
+        // The custom layout displays the photo thumbnail and caption
+        // Lambda expression to create a new PhotoListCell for each item in the ListView
         photoListView.setCellFactory(listView -> new PhotoListCell());
         
         // Populate the photo list view with photos from the selected album
         photoListView.getItems().setAll(selectedAlbum.getPhotos());
-        
-        // Other initializations as needed...
     }
 
     /**
@@ -131,12 +132,15 @@ public class AlbumViewController {
          */
         @Override
         protected void updateItem(Photo item, boolean empty) {
+            // Call the super method to update the item in the cell first
             super.updateItem(item, empty);
 
             if (item != null && !empty) {
                 caption.setText(item.getCaption()); // Set the caption text
-                // Set the thumbnail image (you need to implement a method to get the thumbnail in your Photo class)
+                // Set the thumbnail image (scaled to 100x100) for the photo in the cell
                 image.setImage(item.getThumbnail());
+                // Set the content of the cell to the custom layout (HBox with ImageView and Text)
+                // This layout displays the photo thumbnail and caption
                 setGraphic(content);
             } else {
                 setGraphic(null);
