@@ -22,9 +22,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class SearchViewController {
 
@@ -66,17 +68,19 @@ public class SearchViewController {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
-        List<Photo> matchingPhotos = new ArrayList<>();
+        Set<Photo> matchingPhotosSet = new HashSet<>(); // set to avoid duplicates
 
         for (Album album : currentUser.getAlbums()) {
             for (Photo photo : album.getPhotos()) {
                 LocalDateTime photoDate = photo.getDate();
                 if ((photoDate.isEqual(startDateTime) || photoDate.isAfter(startDateTime)) &&
                     (photoDate.isEqual(endDateTime) || photoDate.isBefore(endDateTime))) {
-                    matchingPhotos.add(photo);
+                    matchingPhotosSet.add(photo);
                 }
             }
         }
+
+        List<Photo> matchingPhotos = new ArrayList<>(matchingPhotosSet);
 
         if (matchingPhotos.isEmpty()) {
             showErrorDialog("No photos found in the specified date range.");
@@ -90,12 +94,89 @@ public class SearchViewController {
     // Method to handle searching by tag
     @FXML
     private void handleSearchByTag() {
-        String tag1Type = tag1TypeField.getText();
-        String tag1Value = tag1ValueField.getText();
-        String tag2Type = tag2TypeField.getText();
-        String tag2Value = tag2ValueField.getText();
+        String tag1Type = tag1TypeField.getText().trim().toLowerCase();
+        String tag1Value = tag1ValueField.getText().trim().toLowerCase();
+        String tag2Type = tag2TypeField.getText().trim().toLowerCase();
+        String tag2Value = tag2ValueField.getText().trim().toLowerCase();
         String searchType = tagSearchType.getValue();
-        // Implement the search logic based on searchType and update searchResultsView
+
+        // Input validation
+        if (searchType == null) {
+            showErrorDialog("Please select a search type.");
+            return;
+        }
+        // Input validation for "Single" search type
+        if (searchType.equals("Single")) {
+            if ((tag1Type.isEmpty() || tag1Value.isEmpty()) && (tag2Type.isEmpty() || tag2Value.isEmpty())) {
+                showErrorDialog("Please fill in at least one tag type-value pair for single tag search.");
+                return;
+            }
+            if ((!tag1Type.isEmpty() && tag1Value.isEmpty()) || (!tag2Type.isEmpty() && tag2Value.isEmpty())) {
+                showErrorDialog("Both tag type and value must be filled in.");
+                return;
+            }
+            if ((!tag1Type.isEmpty() && !tag1Value.isEmpty()) && (!tag2Type.isEmpty() && !tag2Value.isEmpty())) {
+                showErrorDialog("Only one tag type-value pair should be filled in for single tag search.");
+                return;
+            }
+        }
+
+        // Input validation for "Conjunctive" and "Disjunctive" search types
+        if (searchType.equals("Conjunctive") || searchType.equals("Disjunctive")) {
+            if (tag1Type.isEmpty() || tag1Value.isEmpty() || tag2Type.isEmpty() || tag2Value.isEmpty()) {
+                showErrorDialog("All fields must be filled in for conjunctive/disjunctive tag search.");
+                return;
+            }
+        }
+
+        Set<Photo> matchingPhotosSet = new HashSet<>(); // Use a Set to avoid duplicates
+
+
+        for (Album album : currentUser.getAlbums()) {
+            for (Photo photo : album.getPhotos()) {
+                boolean matches = false;
+
+                switch (searchType) {
+                    case "Single":
+                        // Either tag1 or tag2 must match but not both
+                        boolean matchesTag1 = matchesTagCriteria(photo, tag1Type, tag1Value);
+                        boolean matchesTag2 = matchesTagCriteria(photo, tag2Type, tag2Value);
+                        matches = (matchesTag1 && !matchesTag2) || (!matchesTag1 && matchesTag2); // Use logical XOR for single search
+                        break;
+                    case "Conjunctive":
+                        // Both tags must match
+                        boolean conMatchesTag1 = matchesTagCriteria(photo, tag1Type, tag1Value);
+                        boolean conMatchesTag2 = matchesTagCriteria(photo, tag2Type, tag2Value);
+                        matches = conMatchesTag1 && conMatchesTag2; // Use logical AND for conjunctive search
+                        break;
+                    case "Disjunctive":
+                        // Disjunctive search logic...
+                        boolean disMatchesTag1 = matchesTagCriteria(photo, tag1Type, tag1Value);
+                        boolean disMatchesTag2 = matchesTagCriteria(photo, tag2Type, tag2Value);
+                        matches = disMatchesTag1 || disMatchesTag2; // Use logical OR for disjunctive search
+                        break;
+                }
+
+                if (matches) {
+                    matchingPhotosSet.add(photo); // Add photo to the set if it matches the criteria
+                }
+            }
+        }
+
+        List<Photo> matchingPhotos = new ArrayList<>(matchingPhotosSet); // Convert the Set to a List
+
+        // Update searchResultsView with matchingPhotos...
+        if (matchingPhotos.isEmpty()) {
+            showErrorDialog("No photos found matching the specified tag criteria.");
+        } else {
+            searchResultsView.getItems().setAll(matchingPhotos);
+        }
+    }
+
+    // Method to search albums and photos by tag
+    private boolean matchesTagCriteria(Photo photo, String tagType, String tagValue) {
+        return photo.getTags().stream()
+                    .anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType) && tag.getTagValue().equalsIgnoreCase(tagValue));
     }
 
     @FXML
