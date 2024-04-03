@@ -17,19 +17,30 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-// Represents the controller for the admin view, which handles admin-specific functionality such as user management.
-
+/**
+ * Controller class for the admin view.
+ */
 public class AdminViewController {
 
     @FXML
     private TableView<User> userTableView;
 
     @FXML
-        private void initialize() {
-            refreshUserListView();
-        }
+    /**
+     * Initializes the admin view.
+     * This method is called automatically after the fxml file has been loaded.
+     * It is used to initialize the view with the current users.
+     */
+    private void initialize() {
+        refreshUserListView();
+    }
 
     @FXML
+    /**
+     * Handles the logout button click event.
+     * Saves the user data and closes the current window.
+     * Opens the login window.
+     */
     private void handleLogout() {
     // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
@@ -47,6 +58,10 @@ public class AdminViewController {
     }
 
     @FXML
+    /**
+     * Handles the quit button click event.
+     * Saves the user data and closes the entire application.
+     */
     private void handleQuit() {
         // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
@@ -61,6 +76,10 @@ public class AdminViewController {
     }    
 
     @FXML
+    /**
+     * Handles the create new user button click event.
+     * Prompts the admin to enter a new username and creates a new user with that username.
+     */
     private void handleCreateNewUser() {
         // Prompt for the new username, for example, using a TextInputDialog
         TextInputDialog dialog = new TextInputDialog();
@@ -91,6 +110,10 @@ public class AdminViewController {
     }
 
     @FXML
+    /**
+     * Handles the delete selected user button click event.
+     * Deletes the selected user from the list of users.
+     */
     private void handleDeleteSelectedUser() {
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
         if (selectedUser == null) {
@@ -110,6 +133,9 @@ public class AdminViewController {
         }
     }    
     
+    /**
+     * Opens the login window.
+     */
     private void openLoginWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
@@ -124,13 +150,18 @@ public class AdminViewController {
         }
     }
 
-    // Refresh the TableView or ListView that displays users
+    /**
+     * Refreshes the user list view with the current users.
+     */
     private void refreshUserListView() {
         userTableView.getItems().clear(); // Clear the existing items in the TableView
         DataManager.getUsersMap().values().forEach(user -> userTableView.getItems().add(user)); // Add all current users to the TableView
     }    
 
-    // Method to show an error dialog
+    /**
+     * Shows an error dialog with the specified message.
+     * @param message The message to display in the dialog.
+     */
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");

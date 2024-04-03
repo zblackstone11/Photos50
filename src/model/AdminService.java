@@ -21,7 +21,7 @@ public class AdminService {
 
     /**
      * Method to create a new user.
-     * @param newUsername
+     * @param newUsername The username of the new user.
      * @return True if the user was created successfully, false if the user already exists.
      */
     public static boolean createUser(String newUsername) {
@@ -35,7 +35,7 @@ public class AdminService {
 
     /**
      * Method to delete a user.
-     * @param usernameToDelete
+     * @param usernameToDelete The username of the user to delete.
      * @return True if the user was deleted successfully, false if the user doesn't exist.
      */
     public static boolean deleteUser(String usernameToDelete) {
