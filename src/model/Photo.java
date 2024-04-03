@@ -15,12 +15,11 @@ import java.util.Objects;
 
 import javafx.scene.image.Image;
 
-// Represents a photo with properties such as file path, date of the photo (last modification date), caption, and a list of 
-// tags. Methods could include adding/removing tags and updating the caption.
-
+/**
+ * Class to represent a photo in the Photos application.
+ */
 public class Photo implements Serializable {
 
-    // First some fields including the file path, date of the photo using java.time package, caption, and a list of tags.
     private static final long serialVersionUID = 1L; // 1L is generic
     private String filePath;
     private LocalDateTime dateTaken;
@@ -29,9 +28,10 @@ public class Photo implements Serializable {
     private final int THUMBNAIL_WIDTH = 100; // Width for the thumbnail
     private final int THUMBNAIL_HEIGHT = 100; // Height for the thumbnail
 
-    // Constructors: one that takes just the file path
-
-    // Constructor that takes just the file path.
+    /**
+     * Constructor that takes only the file path of the photo.
+     * @param filePath The file path of the photo.
+     */
     public Photo(String filePath) {
         this.filePath = filePath;
         this.dateTaken = getLastModificationDate(filePath);
@@ -39,7 +39,11 @@ public class Photo implements Serializable {
         this.tags = new ArrayList<Tag>();
     }
 
-    // Helper method to get the last modification date of a file.
+    /**
+     * Helper method to get the last modification date of a file.
+     * @param filePath The file path of the photo.
+     * @return The last modification date of the file.
+     */
     private LocalDateTime getLastModificationDate(String filePath) {
         try {
             Path path = Paths.get(filePath);
@@ -51,49 +55,74 @@ public class Photo implements Serializable {
         }
     }
 
-    // Getters and setters for all fields.
-
-    // Getter for file path.
+    /**
+     * Getter for file path.
+     * @return The file path of the photo.
+     */
     public String getFilePath() {
         return filePath;
     }
 
-    // Setter for file path.
+    /**
+     * Setter for file path.
+     * @param filePath The file path of the photo.
+     */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
 
-    // Getter for date.
+    /**
+     * Getter for date.
+     * @return The date the photo was taken.
+     */
     public LocalDateTime getDate() {
         return dateTaken;
     }
 
-    // Setter for date.
+    /**
+     * Setter for date.
+     * @param date The date the photo was taken.
+     */
     public void setDate(LocalDateTime date) {
         this.dateTaken = date;
     }
 
-    // Getter for caption.
+    /**
+     * Getter for caption.
+     * @return The caption of the photo.
+     */
     public String getCaption() {
         return caption;
     }
 
-    // Setter for caption.
+    /**
+     * Setter for caption.
+     * @param caption The caption of the photo.
+     */
     public void setCaption(String caption) {
         this.caption = caption;
     }
 
-    // Getter for tags.
+    /**
+     * Getter for tags.
+     * @return The tags of the photo.
+     */
     public ArrayList<Tag> getTags() {
         return tags;
     }
 
-    // Setter for tags.
+    /**
+     * Setter for tags.
+     * @param tags The tags of the photo.
+     */
     public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;
     }
 
-    // Method to get the thumbnail of the photo.
+    /**
+     * Getter for thumbnail.
+     * @return The thumbnail of the photo.
+     */
     public Image getThumbnail() {
         try {
             Image image = new Image(new FileInputStream(filePath), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, true, true);
@@ -104,9 +133,11 @@ public class Photo implements Serializable {
         }
     }
 
-    // Tag management methods. Add a tag, remove a tag, and update a tag.
-
-    // Method to add a tag.
+    /**
+     * Method to add a tag.
+     * @param tag The tag to add.
+     * @return True if the tag was added, false otherwise.
+     */
     public boolean addTag(Tag tag) {
         if (tags.contains(tag)) {
             return false;
@@ -115,7 +146,11 @@ public class Photo implements Serializable {
         return true;
     }
 
-    // Method to remove a tag.
+    /**
+     * Method to delete a tag.
+     * @param tag The tag to delete.
+     * @return True if the tag was deleted, false otherwise.
+     */
     public boolean deleteTag(Tag tag) {
         if (!tags.contains(tag)) {
             return false;
@@ -124,15 +159,20 @@ public class Photo implements Serializable {
         return true;
     }
 
-    // Method to see if a photo has a tag of a certain type.
+    /**
+     * Method to check if a photo has a tag of a certain type.
+     * @param tagType The type of tag to check for.
+     * @return True if the photo has a tag of the specified type, false otherwise.
+     */
     public boolean hasTagOfType(String tagType) {
         return tags.stream().anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType));
     }
-    
 
-    // Equals and hashcode methods. Two photos are equal if their file paths are equal and their dates are equal.
-
-    // Equals method.
+    /**
+     * Equals method.
+     * @param o The object to compare.
+     * @return True if the objects are equal, false otherwise.
+     */
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -144,12 +184,18 @@ public class Photo implements Serializable {
         return filePath.equals(p.getFilePath()) && dateTaken.equals(p.getDate());
     }
 
-    // Hashcode method.
+    /**
+     * Hash code method.
+     * @return The hash code of the photo.
+     */
     public int hashCode() {
         return Objects.hash(filePath, dateTaken);
     }
 
-    // toString method.
+    /**
+     * To string method.
+     * @return The string representation of the photo.
+     */
     public String toString() {
         return "Photo: " + filePath + ", Date: " + dateTaken + ", Caption: " + caption + ", Tags: " + tags;
     }

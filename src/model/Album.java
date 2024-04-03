@@ -6,22 +6,25 @@ import java.util.Comparator;
 import java.io.Serializable;
 import java.util.Objects;
 
-// Represents an album with properties like name, list of photos, and possibly date range 
-// (earliest and latest photo dates). Methods might include adding/removing photos, renaming the album, etc.
-
+/**
+ * Class to represent an album in the Photos application.
+ * An album has a name, a list of photos, and metadata including the date created and date last modified.
+ */
 public class Album implements Serializable {
 
-    // First some fields including the name of the album and a list of photos. Also date of creation and date of last modification.
-
+    /**
+     * Serial version UID for serialization.
+     */
     private static final long serialVersionUID = 1L;
     private String name;
     private ArrayList<Photo> photos;
     private final LocalDateTime dateCreated;
     private LocalDateTime dateModified;
 
-    // Constructors: one that takes just the name, and one that takes name and photos.
-
-    // Constructor that takes just the name.
+   /**
+    * Constructor that takes only the name of the album.
+    * @param name The name of the album.
+    */
     public Album(String name) {
         this.name = name;
         this.photos = new ArrayList<Photo>();
@@ -29,7 +32,11 @@ public class Album implements Serializable {
         this.dateModified = LocalDateTime.now();
     }
 
-    // Constructor that takes name and photos.
+    /**
+     * Constructor that takes the name of the album and a list of photos.
+     * @param name The name of the album.
+     * @param photos The list of photos to add to the album.
+     */
     public Album(String name, java.util.ArrayList<Photo> photos) {
         this.name = name;
         this.photos = new ArrayList<>(photos); // make a copy of the list
@@ -37,46 +44,59 @@ public class Album implements Serializable {
         this.dateModified = LocalDateTime.now();
     }
 
-    // Getters and setters for all fields.
-
-    // Getter for name.
+    /**
+     * Getter for name.
+     * @return The name of the album.
+     */
     public String getName() {
         return name;
     }
 
-    // Setter for name.
+    /**
+     * Setter for name.
+     * @param name The new name of the album.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    // Getter for photos.
+    /**
+     * Getter for photos.
+     * @return The list of photos in the album.
+     */
     public ArrayList<Photo> getPhotos() {
         return photos;
     }
-
-    // Setter for photos. Might drop this and just use addPhoto/removePhoto methods.
-    public void setPhotos(ArrayList<Photo> photos) {
-        this.photos = photos;
-    }
-
-    // Getter for dateCreated.
+  
+    /** 
+     * Getter for dateCreated.
+     * @return The date the album was created.
+     */
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
-    // Getter for dateModified.
+    /**
+     * Getter for dateModified.
+     * @return The date the album was last modified.
+     */
     public LocalDateTime getDateModified() {
         return dateModified;
     }
 
-    // Setter for dateModified.
+    /**
+     * Setter for dateModified.
+     * @param dateModified The new date the album was last modified.
+     */
     public void setDateModified(LocalDateTime dateModified) {
         this.dateModified = dateModified;
     }
 
-    // Methods to add/remove photos, get the photo list, album metadata, equals and hashcode, toString, etc.
-
-    // Method to add a photo to the album.
+    /**
+     * Method to add a photo to the album.
+     * @param photo The photo to add to the album.
+     * @return True if the photo was added successfully, false if the photo is already in the album.
+     */
     public boolean addPhoto(Photo photo) {
         // Check if the photo is already in the album.
         if (photos.contains(photo)) {
@@ -87,7 +107,10 @@ public class Album implements Serializable {
         return true;
     }
 
-    // Method to remove a photo from the album.
+    /**
+     * Method to remove a photo from the album.
+     * @param photo The photo to remove from the album.
+     */
     public void removePhoto(Photo photo) {
         // Check if the photo is in the album.
         if (!photos.contains(photo)) {
@@ -97,24 +120,34 @@ public class Album implements Serializable {
         dateModified = LocalDateTime.now();
     }
 
-    // Method to get the list of photos in the album.
+    /**
+     * Method to get the list of photos in the album.
+     * @return The list of photos in the album.
+     */
     public ArrayList<Photo> getPhotoList() {
         return photos;
     }
 
-    // Method to get the metadata of the album.
+    /**
+     * Method to get the metadata of the album.
+     * @return A string containing the metadata of the album.
+     */
     public String getAlbumMetadata() {
         return "Album name: " + name + "\nDate created: " + dateCreated + "\nDate last modified: " + dateModified;
     }
 
-    // Methods for getting the number of photos in the album and determining the range of dates of the photos.
-
-    // Method to get the number of photos in the album.
+    /**
+     * Method to get the number of photos in the album.
+     * @return The number of photos in the album.
+     */
     public int getNumPhotos() {
         return photos.size();
     }
 
-    // Method to get the range of dates of the photos in the album.
+    /**
+     * Method to get the date range of the photos in the album.
+     * @return A string containing the earliest and latest dates of the photos in the album.
+     */
     public String getDateRange() {
         if (photos.isEmpty()) {
             return "N/A";
@@ -132,10 +165,10 @@ public class Album implements Serializable {
         return "Earliest: " + earliest + "\nLatest: " + latest;
     }
 
-
-    // Equals and hashcode methods.
-
-    // Equals method.
+    /**
+     * Method to check for equality between two albums
+     * @return True if the albums are equal, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -148,19 +181,28 @@ public class Album implements Serializable {
         return name.equals(a.getName()) && photos.equals(a.getPhotos()) && dateCreated.equals(a.getDateCreated()) && dateModified.equals(a.getDateModified());
     }
 
-    // Hashcode method.
+    /**
+     * Method to generate a hash code for the album.
+     * @return The hash code for the album.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name, photos, dateCreated, dateModified);
     }
 
-    // toString method.
+    /**
+     * Method to generate a string representation of the album.
+     * @return A string representation of the album.
+     */
     @Override
     public String toString() {
         return "Album name: " + name + "\nDate created: " + dateCreated + "\nDate last modified: " + dateModified + "\nNumber of photos: " + photos.size();
     }
 
-    // Sorting method to sort the photos in the album by date.
+    /** 
+     * Method to sort the photos in the album by date.
+     * This method uses a custom comparator to sort the photos by date.
+     */
     public void sortPhotosByDate() {
         photos.sort(new Comparator<Photo>() {
             @Override
@@ -170,7 +212,10 @@ public class Album implements Serializable {
         });
     }
 
-    // Sorting method to sort the photos in the album by tags.
+    /**
+     * Method to sort the photos in the album by tags.
+     * This method uses a custom comparator to sort the photos by tags.
+     */
     public void sortPhotosByTags() {
         photos.sort(new Comparator<Photo>() {
             @Override
@@ -180,7 +225,10 @@ public class Album implements Serializable {
         });
     }
 
-    // Tag aggregation method to get all tags in the album.
+    /**
+     * Method to get all tags in the album.
+     * @return A list of all tags in the album.
+     */
     public ArrayList<Tag> getAllTags() {
         ArrayList<Tag> allTags = new ArrayList<>();
         for (Photo p : photos) {
@@ -193,7 +241,11 @@ public class Album implements Serializable {
         return allTags;
     }
 
-    // Photo retrieval method to get all photos with a certain tag.
+    /**
+     * Method to get all photos with a certain tag.
+     * @param tag The tag to search for.
+     * @return A list of all photos with the specified tag.
+     */
     public ArrayList<Photo> getPhotosWithTag(Tag tag) {
         ArrayList<Photo> photosWithTag = new ArrayList<>();
         for (Photo p : photos) {
@@ -204,7 +256,12 @@ public class Album implements Serializable {
         return photosWithTag;
     }
 
-    // Photo retrieval method to get all photos taken within a certain date range.
+    /**
+     * Method to get all photos in a date range.
+     * @param startDate The start date of the range.
+     * @param endDate The end date of the range.
+     * @return A list of all photos in the specified date range.
+     */
     public ArrayList<Photo> getPhotosInDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         ArrayList<Photo> photosInDateRange = new ArrayList<>();
         for (Photo p : photos) {
@@ -214,5 +271,4 @@ public class Album implements Serializable {
         }
         return photosInDateRange;
     }
-    
 }
