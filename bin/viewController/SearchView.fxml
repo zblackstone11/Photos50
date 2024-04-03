@@ -34,6 +34,7 @@
             <Button text="Create Album from Results" onAction="#handleCreateAlbumFromResults"/>
             <Button text="Logout" onAction="#handleLogout"/>
             <Button text="Quit" onAction="#handleQuit"/>
+            <Button text="Back to User View" onAction="#handleBackToUserView"/>
         </HBox>
     </bottom>
 </BorderPane>

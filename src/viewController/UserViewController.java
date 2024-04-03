@@ -235,9 +235,9 @@ public class UserViewController {
             searchStage.setScene(new Scene(root));
             searchStage.show();
 
-            // Optionally, you could close the current UserView window, or keep it open
-            // Stage currentStage = (Stage) albumsTableView.getScene().getWindow();
-            // currentStage.close();
+            // Close the current UserView window
+            Stage currentStage = (Stage) albumsTableView.getScene().getWindow();
+            currentStage.close();
 
         } catch (IOException e) {
             e.printStackTrace();

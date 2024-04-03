@@ -2,14 +2,21 @@ package viewController;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import model.Photo;
 import model.User;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class SearchViewController {
 
@@ -71,4 +78,41 @@ public class SearchViewController {
     private void handleQuit() {
         // Logic for quitting the application
     }
+
+    @FXML
+    private void handleBackToUserView() {
+        // Logic for returning to the UserView
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for UserView and set the current user
+            UserViewController controller = loader.getController();
+            controller.setCurrentUser(currentUser);
+
+            // Create and display the new stage
+            Stage stage = new Stage();
+            stage.setTitle("Your Albums");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Close the current SearchView window
+            Stage currentStage = (Stage) searchResultsView.getScene().getWindow();
+            currentStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle IOException, such as showing an error dialog
+            showErrorDialog("Error returning to user view: " + e.getMessage());
+        }
+    }
+
+    // Method to show an error dialog
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    } 
+
 }
