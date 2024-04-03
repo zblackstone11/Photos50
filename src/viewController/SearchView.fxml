@@ -21,8 +21,7 @@
                 <Label text="Tag 2:"/>
                 <TextField fx:id="tag2TypeField" promptText="Type"/>
                 <TextField fx:id="tag2ValueField" promptText="Value"/>
-                    <ComboBox fx:id="tagSearchType" promptText="Search Type">
-                    </ComboBox>
+                <ComboBox fx:id="tagSearchType" promptText="Search Type"/>
                 <Button text="Search by Tag" onAction="#handleSearchByTag"/>
             </HBox>
         </VBox>
@@ -33,6 +32,8 @@
     <bottom>
         <HBox alignment="CENTER" spacing="10">
             <Button text="Create Album from Results" onAction="#handleCreateAlbumFromResults"/>
+            <Button text="Logout" onAction="#handleLogout"/>
+            <Button text="Quit" onAction="#handleQuit"/>
         </HBox>
     </bottom>
 </BorderPane>

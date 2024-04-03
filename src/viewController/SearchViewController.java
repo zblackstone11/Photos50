@@ -62,5 +62,13 @@ public class SearchViewController {
         // Implement the logic to create a new album from the items in searchResultsView
     }
 
-    // Additional methods for the controller as needed
+    @FXML
+    private void handleLogout() {
+        // Logic for logging out and returning to the login view
+    }
+
+    @FXML
+    private void handleQuit() {
+        // Logic for quitting the application
+    }
 }
