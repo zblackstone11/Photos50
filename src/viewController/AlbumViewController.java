@@ -1,25 +1,34 @@
 package viewController;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -175,7 +184,50 @@ public class AlbumViewController {
 
     @FXML
     private void handleDisplayPhoto() {
-        // Logic for displaying a selected photo in a larger view or separate window
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to display.");
+            return;
+        }
+
+        // Create a new stage for the photo display
+        Stage photoStage = new Stage();
+        photoStage.setTitle("Photo Display");
+
+        // Use VBox for the layout
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        // Create an ImageView for the photo
+        Image image;
+        try {
+            image = new Image(new FileInputStream(selectedPhoto.getFilePath()));
+        } catch (FileNotFoundException e) {
+            showErrorDialog("Error loading photo: " + e.getMessage());
+            return;
+        }
+        ImageView imageView = new ImageView(image);
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(600); // Might be better to use a ScrollPane for large images
+
+        // Create labels for the caption and date-time
+        Label captionLabel = new Label("Caption: " + selectedPhoto.getCaption());
+        Label dateLabel = new Label("Date: " + selectedPhoto.getDate().toString());
+
+        // Create a label or a list for tags
+        String tagString = selectedPhoto.getTags().stream()
+                                        .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
+                                        .collect(Collectors.joining(", "));
+        Label tagsLabel = new Label("Tags: " + tagString);
+
+        // Add everything to the layout
+        layout.getChildren().addAll(imageView, captionLabel, dateLabel, tagsLabel);
+
+        // Set the scene and show the stage
+        Scene scene = new Scene(layout);
+        photoStage.setScene(scene);
+        photoStage.show();
     }
 
     @FXML
@@ -297,22 +349,210 @@ public class AlbumViewController {
 
     @FXML
     private void handleDeleteTag() {
-        // Logic for deleting a tag from a selected photo
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo first.");
+            return;
+        }
+
+        List<Tag> tags = selectedPhoto.getTags();
+        if (tags.isEmpty()) {
+            showErrorDialog("This photo has no tags to delete.");
+            return;
+        }
+
+        List<String> tagDescriptions = tags.stream()
+                                            .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
+                                            .collect(Collectors.toList());
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(null, tagDescriptions);
+        dialog.setTitle("Delete Tag");
+        dialog.setHeaderText("Select a tag to delete:");
+        dialog.setContentText("Tags:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(selectedTagDescription -> {
+            Tag tagToDelete = tags.stream()
+                                .filter(tag -> (tag.getTagName() + ": " + tag.getTagValue()).equals(selectedTagDescription))
+                                .findFirst()
+                                .orElse(null);
+
+            if (tagToDelete != null) {
+                selectedPhoto.deleteTag(tagToDelete);
+                photoListView.refresh(); // Update the ListView to reflect the tag deletion
+                DataManager.saveUserData(currentUser); // Save the changes
+            }
+        });
     }
 
     @FXML
     private void handleCopyPhoto() {
-        // Logic for copying a selected photo to another album
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+    
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to copy.");
+            return;
+        }
+    
+        List<String> choices = new ArrayList<>();
+        for (Album album : currentUser.getAlbums()) {
+            if (!album.equals(selectedAlbum)) {
+                choices.add(album.getName());
+            }
+        }
+    
+        if (choices.isEmpty()) {
+            showErrorDialog("No other albums to copy to.");
+            return;
+        }
+    
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("Copy Photo");
+        dialog.setHeaderText("Select an album to copy the photo to:");
+        dialog.setContentText("Album:");
+    
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String selectedAlbumName = result.get();
+            Album destinationAlbum = currentUser.getAlbumByName(selectedAlbumName);
+            
+            if (destinationAlbum == null) {
+                showErrorDialog("Invalid album selected.");
+                return;
+            }
+    
+            if (destinationAlbum.getPhotos().contains(selectedPhoto)) {
+                showErrorDialog("The selected album already contains this photo.");
+                return;
+            }
+    
+            Photo photoCopy = new Photo(selectedPhoto.getFilePath());
+            photoCopy.setCaption(selectedPhoto.getCaption());
+            photoCopy.setTags(new ArrayList<>(selectedPhoto.getTags())); // Assuming you have a suitable constructor or method
+            destinationAlbum.addPhoto(photoCopy);
+    
+            DataManager.saveUserData(currentUser);
+            showConfirmationDialog("Photo copied successfully to " + selectedAlbumName + ".");
+        }
+    }
+    
+    private void showConfirmationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
     private void handleMovePhoto() {
-        // Logic for moving a selected photo to another album
+        Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
+
+        if (selectedPhoto == null) {
+            showErrorDialog("Please select a photo to move.");
+            return;
+        }
+
+        List<String> choices = new ArrayList<>();
+        for (Album album : currentUser.getAlbums()) {
+            if (!album.equals(selectedAlbum)) {
+                choices.add(album.getName());
+            }
+        }
+
+        if (choices.isEmpty()) {
+            showErrorDialog("No other albums to move to.");
+            return;
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("Move Photo");
+        dialog.setHeaderText("Select an album to move the photo to:");
+        dialog.setContentText("Album:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String selectedAlbumName = result.get();
+            Album destinationAlbum = currentUser.getAlbumByName(selectedAlbumName);
+            
+            if (destinationAlbum == null) {
+                showErrorDialog("Invalid album selected.");
+                return;
+            }
+
+            if (destinationAlbum.getPhotos().contains(selectedPhoto)) {
+                showErrorDialog("The selected album already contains this photo.");
+                return;
+            }
+
+            destinationAlbum.addPhoto(selectedPhoto);
+            selectedAlbum.removePhoto(selectedPhoto);
+
+            DataManager.saveUserData(currentUser);
+            photoListView.getItems().remove(selectedPhoto);
+            showConfirmationDialog("Photo moved successfully to " + selectedAlbumName + ".");
+        }
     }
 
     @FXML
     private void handleSlideshow() {
-        // Logic for starting a slideshow of the photos in the current album
+        if (selectedAlbum.getPhotos().isEmpty()) {
+            showErrorDialog("There are no photos in this album.");
+            return;
+        }
+
+        Stage slideshowStage = new Stage();
+        slideshowStage.setTitle("Slideshow");
+
+        BorderPane borderPane = new BorderPane();
+        ImageView imageView = new ImageView();
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(500); // Adjust size as needed
+        borderPane.setCenter(imageView);
+
+        HBox navigationBox = new HBox();
+        navigationBox.setAlignment(Pos.CENTER);
+        navigationBox.setSpacing(10);
+        Button prevButton = new Button("Previous");
+        Button nextButton = new Button("Next");
+        navigationBox.getChildren().addAll(prevButton, nextButton);
+        borderPane.setBottom(navigationBox);
+
+        // Initial photo display
+        int[] photoIndex = {0};
+        try {
+            imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
+        } catch (FileNotFoundException e) {
+            showErrorDialog(e.getMessage());
+            
+        }
+
+        prevButton.setOnAction(e -> {
+            if (photoIndex[0] > 0) {
+                photoIndex[0]--;
+                try {
+                    imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
+                } catch (FileNotFoundException ex) {
+                    showErrorDialog(ex.getMessage());
+                }
+            }
+        });
+
+        nextButton.setOnAction(e -> {
+            if (photoIndex[0] < selectedAlbum.getPhotos().size() - 1) {
+                photoIndex[0]++;
+                try {
+                    imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        Scene scene = new Scene(borderPane);
+        slideshowStage.setScene(scene);
+        slideshowStage.show();
     }
 
     @FXML
