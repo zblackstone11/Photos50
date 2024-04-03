@@ -20,12 +20,39 @@ import javafx.scene.image.Image;
  */
 public class Photo implements Serializable {
 
+    /**
+     * Serial version UID for serialization.
+     */
     private static final long serialVersionUID = 1L; // 1L is generic
+
+    /**
+     * The file path of the photo.
+     */
     private String filePath;
+
+    /**
+     * The date the photo was taken.
+     */
     private LocalDateTime dateTaken;
+
+    /**
+     * The caption of the photo.
+     */
     private String caption;
+
+    /**
+     * The list of tags of the photo.
+     */
     private ArrayList<Tag> tags;
+
+    /**
+     * The width for the thumbnail.
+     */
     private final int THUMBNAIL_WIDTH = 100; // Width for the thumbnail
+
+    /**
+     * The height for the thumbnail.
+     */
     private final int THUMBNAIL_HEIGHT = 100; // Height for the thumbnail
 
     /**

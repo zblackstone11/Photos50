@@ -16,7 +16,6 @@ import model.Album;
 import model.DataManager;
 import model.Photo;
 import model.User;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,32 +27,81 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * SearchViewController class for the search view.
+ */
 public class SearchViewController {
 
+    /**
+     * The DatePicker for the start date of the search.
+     */
     @FXML
     private DatePicker startDatePicker;
+
+    /**
+     * The DatePicker for the end date of the search.
+     */
     @FXML
     private DatePicker endDatePicker;
+
+    /**
+     * The TextField for the first tag type.
+     */
     @FXML
     private TextField tag1TypeField;
+
+    /**
+     * The TextField for the first tag value.
+     */
     @FXML
     private TextField tag1ValueField;
+
+    /**
+     * The TextField for the second tag type.
+     */
     @FXML
     private TextField tag2TypeField;
+
+    /**
+     * The TextField for the second tag value.
+     */
     @FXML
     private TextField tag2ValueField;
+
+    /**
+     * The ComboBox for the tag search type.
+     */
     @FXML
     private ComboBox<String> tagSearchType;
+
+    /**
+     * The ListView to display the search results.
+     */
     @FXML
     private ListView<Photo> searchResultsView;
 
+    /**
+     * The current user logged in.
+     */
     private User currentUser;
 
+    /**
+     * Method to initialize the SearchViewController with the current user.
+     * This method is called from the UserViewController to pass the current user.
+     * @param currentUser The current user logged in.
+     */
     public void initialize(User currentUser) {
         this.currentUser = currentUser;
         tagSearchType.setItems(FXCollections.observableArrayList("Single", "Conjunctive", "Disjunctive"));
     }
 
+    /**
+     * Method to handle searching by date.
+     * This method is called when the user clicks the "Search by Date" button.
+     * It reads the start and end dates from the DatePickers and searches for photos in that range.
+     * It then displays the search results in the ListView.
+     * If no photos are found, it shows an error dialog.
+     */
     @FXML
     private void handleSearchByDate() {
         LocalDate startDate = startDatePicker.getValue();
@@ -91,7 +139,13 @@ public class SearchViewController {
         }
     }
 
-    // Method to handle searching by tag
+    /**
+     * Method to handle searching by tag.
+     * This method is called when the user clicks the "Search by Tag" button.
+     * It reads the tag type, value, and search type from the TextFields and ComboBox.
+     * It then searches for photos based on the tag criteria and displays the search results in the ListView.
+     * If no photos are found, it shows an error dialog.
+     */
     @FXML
     private void handleSearchByTag() {
         String tag1Type = tag1TypeField.getText().trim().toLowerCase();
@@ -130,7 +184,6 @@ public class SearchViewController {
         }
 
         Set<Photo> matchingPhotosSet = new HashSet<>(); // Use a Set to avoid duplicates
-
 
         for (Album album : currentUser.getAlbums()) {
             for (Photo photo : album.getPhotos()) {
@@ -173,12 +226,25 @@ public class SearchViewController {
         }
     }
 
-    // Method to search albums and photos by tag
+    /**
+     * Method to check if a photo matches the tag criteria.
+     * This method is used in the searchByTag method to determine if a photo matches the tag criteria.
+     * @param photo The photo to check.
+     * @param tagType The tag type to match.
+     * @param tagValue The tag value to match.
+     * @return True if the photo matches the tag criteria, false otherwise.
+     */
     private boolean matchesTagCriteria(Photo photo, String tagType, String tagValue) {
         return photo.getTags().stream()
                     .anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType) && tag.getTagValue().equalsIgnoreCase(tagValue));
     }
 
+    /**
+     * Method to handle creating an album from the search results.
+     * This method is called when the user clicks the "Create Album from Results" button.
+     * It prompts the user to enter a name for the new album and creates the album with the search results.
+     * If the album name is empty or already exists, it shows an error dialog.
+     */
     @FXML
     private void handleCreateAlbumFromResults() {
         // Check if the search results view is empty
@@ -233,6 +299,11 @@ public class SearchViewController {
         }
     }
 
+    /**
+     * Method to handle clearing the search fields and results.
+     * This method is called when the user clicks the "Clear" button.
+     * It resets the date pickers, tag fields, and search results.
+     */
     @FXML
     private void handleClear() {
         // Reset date pickers
@@ -250,6 +321,11 @@ public class SearchViewController {
         searchResultsView.getItems().clear();
     }
 
+    /**
+     * Method to handle logging out.
+     * This method is called when the user clicks the "Logout" button.
+     * It saves the user data and closes the current window, then opens the login window.
+     */
     @FXML
     private void handleLogout() {
     // Retrieve the map of users
@@ -267,6 +343,11 @@ public class SearchViewController {
         openLoginWindow();
     }
 
+    /**
+     * Method to handle quitting the application.
+     * This method is called when the user clicks the "Quit" button.
+     * It saves the user data and closes the application.
+     */
     @FXML
     private void handleQuit() {
         // Logic to handle quit action
@@ -283,6 +364,12 @@ public class SearchViewController {
         stage.close();
     }
 
+    /**
+     * Method to handle returning to the UserView.
+     * This method is called when the user clicks the "Back" button.
+     * It loads the UserView and sets the current user, then displays the new stage.
+     * It closes the current SearchView window.
+     */
     @FXML
     private void handleBackToUserView() {
         // Logic for returning to the UserView
@@ -310,7 +397,10 @@ public class SearchViewController {
         }
     }
 
-    // Method to show an error dialog
+    /**
+     * Method to show an error dialog with the specified message.
+     * @param message The error message to display.
+     */
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -319,7 +409,11 @@ public class SearchViewController {
         alert.showAndWait();
     } 
 
-    // Method to go back to the login view
+    /**
+     * Method to open the login window.
+     * This method is called when the user logs out.
+     * It loads the LoginView FXML file and displays the login window.
+     */
     private void openLoginWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));

@@ -16,9 +16,25 @@ public class Album implements Serializable {
      * Serial version UID for serialization.
      */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The name of the album.
+     */
     private String name;
+
+    /**
+     * The list of photos in the album.
+     */
     private ArrayList<Photo> photos;
+
+    /**
+     * The date the album was created.
+     */
     private final LocalDateTime dateCreated;
+
+    /**
+     * The date the album was last modified.
+     */
     private LocalDateTime dateModified;
 
    /**

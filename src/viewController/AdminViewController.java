@@ -22,25 +22,28 @@ import java.util.Optional;
  */
 public class AdminViewController {
 
+    /**
+     * The TableView to display the list of users.
+     */
     @FXML
     private TableView<User> userTableView;
 
-    @FXML
     /**
      * Initializes the admin view.
      * This method is called automatically after the fxml file has been loaded.
      * It is used to initialize the view with the current users.
      */
+    @FXML
     private void initialize() {
         refreshUserListView();
     }
 
-    @FXML
     /**
      * Handles the logout button click event.
      * Saves the user data and closes the current window.
      * Opens the login window.
      */
+    @FXML
     private void handleLogout() {
     // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
@@ -57,11 +60,11 @@ public class AdminViewController {
         openLoginWindow();
     }
 
-    @FXML
     /**
      * Handles the quit button click event.
      * Saves the user data and closes the entire application.
      */
+    @FXML
     private void handleQuit() {
         // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
@@ -75,11 +78,11 @@ public class AdminViewController {
         primaryStage.close();
     }    
 
-    @FXML
     /**
      * Handles the create new user button click event.
      * Prompts the admin to enter a new username and creates a new user with that username.
      */
+    @FXML
     private void handleCreateNewUser() {
         // Prompt for the new username, for example, using a TextInputDialog
         TextInputDialog dialog = new TextInputDialog();
@@ -109,11 +112,11 @@ public class AdminViewController {
         });
     }
 
-    @FXML
     /**
      * Handles the delete selected user button click event.
      * Deletes the selected user from the list of users.
      */
+    @FXML
     private void handleDeleteSelectedUser() {
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
         if (selectedUser == null) {

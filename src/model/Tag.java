@@ -8,9 +8,19 @@ import java.util.Objects;
  */
 public class Tag implements Serializable {
 
-    // First some fields including the tag name and value.
+    /**
+     * Serial version UID for serialization.
+     */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The name of the tag.
+     */
     private String tagName; // location, person, aspect ratio etc
+
+    /**
+     * The value of the tag.
+     */
     private String tagValue; // New York, John Doe, 16:9 etc
 
     /**

@@ -16,7 +16,17 @@ public class DataManager {
      * The user map file is stored in this directory.
      */
     private static final String DATA_DIR = "data";
+
+    /** 
+     * The file name for the user map file.
+     * This file stores the map of usernames to user objects.
+     */
     private static final String USER_MAP_FILE = "users.dat";
+
+    /** 
+     * The in-memory map of users.
+     * This map stores the usernames as keys and the corresponding user objects as values.
+     */
     private static Map<String, User> usersMap = new HashMap<>(); // In-memory storage of users
 
     /**

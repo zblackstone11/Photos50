@@ -13,10 +13,25 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
 
-    // First some fields including the username and a list of albums.
+    /**
+     * Serial version UID for serialization.
+     * This is used to ensure that the deserialization process is compatible with the serialization process.
+     */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The username of the user.
+     */
     private String username;
+
+    /**
+     * The list of albums of the user.
+     */
     private ArrayList<Album> albums;
+
+    /**
+     * The map of tag types and their multiplicities.
+     */
     private Map<String, Integer> tagTypes; // Map to store tag types and their multiplicities
 
 
@@ -66,8 +81,11 @@ public class User implements Serializable {
     }
 
     /**
-     * Setter for albums.
-     * @param albums The list of albums of the user.
+     * Getter for tag types.
+     * The map of tag types and their multiplicities.
+     * The key is the tag type, and the value is the multiplicity.
+     * The multiplicity is the number of values that a tag of that type can have.
+     * @return The map of tag types and their multiplicities.
      */
     public Map<String, Integer> getTagTypes() {
         return tagTypes;

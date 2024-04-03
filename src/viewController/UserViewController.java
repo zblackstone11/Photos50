@@ -3,7 +3,6 @@ package viewController;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableView;
@@ -17,25 +16,47 @@ import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
 import model.Album;
 import model.DataManager;
-import model.Photo;
 import model.User;
 
+/**
+ * Controller class for the UserView FXML file.
+ */
 public class UserViewController {
 
+    /**
+     * The TableView to display the user's albums.
+     */
     @FXML
     private TableView<Album> albumsTableView;
 
+    /**
+     * The TableColumn for the album name.
+     */
     @FXML
     private TableColumn<Album, String> albumNameColumn;
 
+    /**
+     * The TableColumn for the number of photos in the album.
+     */
     @FXML
     private TableColumn<Album, Integer> numPhotosColumn;
 
+    /**
+     * The TableColumn for the date range of photos in the album.
+     */
     @FXML
     private TableColumn<Album, String> dateRangeColumn;
 
+    /**
+     * The current user logged in.
+     */
     private User currentUser;
 
+    /**
+     * Initializes the controller after its root element has been completely processed.
+     * This method is called once all FXML elements have been processed.
+     * It sets the cell value factories for the table columns and populates the albums table.
+     */
     @FXML
     public void initialize() {
         // Set the cell value factories for the table columns
@@ -46,11 +67,26 @@ public class UserViewController {
         // No need to populate the table here, as setCurrentUser will be called after the controller is initialized
     }
 
+    /**
+     * Sets the current user for the controller.
+     * This method is called from the LoginController after the user has logged in.
+     * It populates the albums table with the user's albums.
+     *
+     * @param currentUser The current user logged in.
+     */
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
         populateAlbumsTable(); // This will populate the table once the current user is set
     }
 
+    /**
+     * Populates the albums table with the user's albums.
+     * This method is called after the current user is set.
+     * It sets the items of the TableView to the user's albums.
+     * If the current user is null, the table will be empty.
+     * If the current user has no albums, the table will be empty.
+     * If the current user has albums, they will be displayed in the table.
+     */
     private void populateAlbumsTable() {
         if (currentUser != null) {
             // Add albums to the table view
@@ -58,6 +94,12 @@ public class UserViewController {
         }
     }
 
+    /**
+     * Event handler for the logout button.
+     * This method is called when the user clicks the logout button.
+     * It saves the user data and closes the current window.
+     * It then opens the login window.
+     */
     @FXML
     private void handleLogout() {
     // Retrieve the map of users
@@ -75,6 +117,11 @@ public class UserViewController {
         openLoginWindow();
     }
 
+    /**
+     * Event handler for the quit button.
+     * This method is called when the user clicks the quit button.
+     * It saves the user data and closes the application.
+     */
     @FXML
     private void handleQuit() {
         // Logic to handle quit action
@@ -91,6 +138,13 @@ public class UserViewController {
         stage.close();
     }
 
+    /**
+     * Event handler for the create album button.
+     * This method is called when the user clicks the create album button.
+     * It prompts the user to enter a name for the new album.
+     * If the user enters a valid name, a new album is created and added to the user's list of albums.
+     * The albums table is then updated to reflect the new album.
+     */
     @FXML
     private void handleCreateAlbum() {
         // Create a TextInputDialog to ask the user for the album name
@@ -123,6 +177,13 @@ public class UserViewController {
         });
     }
 
+    /**
+     * Event handler for the delete album button.
+     * This method is called when the user clicks the delete album button.
+     * It prompts the user to confirm the deletion of the selected album.
+     * If the user confirms the deletion, the selected album is removed from the user's list of albums.
+     * The albums table is then updated to reflect the deletion.
+     */
     @FXML
     private void handleDeleteAlbum() {
         // Get the selected album from the TableView
@@ -148,6 +209,12 @@ public class UserViewController {
         }
     }
 
+    /**
+     * Event handler for the rename album button.
+     * This method is called when the user clicks the rename album button.
+     * It prompts the user to enter a new name for the selected album.
+     * If the user enters a valid name, the selected album is renamed and the albums table is updated.
+     */
     @FXML
     private void handleRenameAlbum() {
         // Get the selected album from the TableView
@@ -183,6 +250,11 @@ public class UserViewController {
         });
     }
 
+    /**
+     * Event handler for the open album button.
+     * This method is called when the user clicks the open album button.
+     * It opens the album view for the selected album.
+     */
     @FXML
     private void handleOpenAlbum() {
         // Get the selected album from the TableView
@@ -218,6 +290,11 @@ public class UserViewController {
             }
     }
 
+    /**
+     * Event handler for the search photos button.
+     * This method is called when the user clicks the search photos button.
+     * It opens the search view for the user to search for photos.
+     */
     @FXML
     private void handleSearchPhotos() {
         try {
@@ -245,8 +322,11 @@ public class UserViewController {
         }
     }
 
-    // Additional methods as needed for the controller
-
+    /**
+     * Method to open the login window.
+     * This method is called when the user logs out.
+     * It loads the LoginView FXML file and sets it to a new stage.
+     */
     private void openLoginWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
@@ -261,7 +341,12 @@ public class UserViewController {
         }
     }
 
-    // Method to show an error dialog
+    /**
+     * Method to show an error dialog with the given message.
+     * This method is used to display error messages to the user.
+     *
+     * @param message The error message to display in the dialog.
+     */
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");

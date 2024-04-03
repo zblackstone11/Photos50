@@ -5,12 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -39,14 +37,33 @@ import model.Photo;
 import model.User;
 import model.Tag;
 
+/**
+ * Controller class for the album view.
+ */
 public class AlbumViewController {
 
+    /**
+     * The selected album for the view.
+     */
     private Album selectedAlbum;
+
+    /**
+     * The current user for the view.
+     */
     private User currentUser;
 
+    /**
+     * The ListView for displaying photos in the album.
+     */
     @FXML
     private ListView<Photo> photoListView;
 
+    /**
+     * Method to set the selected album and current user for the view.
+     * This method is called from the UserViewController when the user selects an album.
+     * @param album The selected album.
+     * @param user The current user.
+     */
     public void setAlbumAndUser(Album album, User user) {
         this.selectedAlbum = album;
         this.currentUser = user;
@@ -55,6 +72,10 @@ public class AlbumViewController {
         initializeAlbumView();
     }
 
+    /**
+     * Method to initialize the album view with the selected album's photos.
+     * This method is called when the album view is loaded.
+     */
     private void initializeAlbumView() {
         // Set the custom cell factory for the photo list view
         photoListView.setCellFactory(listView -> new PhotoListCell());
@@ -65,12 +86,33 @@ public class AlbumViewController {
         // Other initializations as needed...
     }
 
-    // Custom ListCell class for displaying photos with thumbnails and captions
+    /**
+     * Custom ListCell class for displaying photos in the ListView.
+     * This class is used to customize the appearance of each photo in the ListView.
+     * Works by setting the graphic of the ListCell to a custom layout (HBox with ImageView and Text).
+     */
     static class PhotoListCell extends ListCell<Photo> {
+
+        /**
+         * The layout for the custom ListCell.
+         * This layout contains an ImageView for the photo thumbnail and a Text component for the caption.
+         * The layout is an HBox with the ImageView and Text components.
+         */
         private HBox content;
+
+        /**
+         * The text component for the photo caption.
+         */
         private Text caption;
+
+        /**
+         * The image component for the photo thumbnail.
+         */
         private ImageView image;
 
+        /**
+         * Constructor for the custom ListCell.
+         */
         public PhotoListCell() {
             super();
             caption = new Text();
@@ -79,6 +121,14 @@ public class AlbumViewController {
             content.setSpacing(10); // Set spacing between image and caption
         }
 
+        /**
+         * Method to update the item in the ListCell.
+         * This method is called whenever the item in the cell needs to be updated.
+         * @param item The Photo object to display.
+         * @param empty A boolean indicating if the cell is empty.
+         * If empty is true, the cell is empty and should not display any content.
+         * If empty is false, the cell should display the Photo object.
+         */
         @Override
         protected void updateItem(Photo item, boolean empty) {
             super.updateItem(item, empty);
@@ -94,6 +144,13 @@ public class AlbumViewController {
         }
     }
 
+    /**
+     * Event handler for the "Add Photo" button.
+     * This method is called when the user clicks the "Add Photo" button.
+     * It opens a FileChooser dialog to let the user select a photo to add to the album.
+     * The selected photo is added to the album and the photo list view is updated.
+     * If the user cancels the dialog or an error occurs, an error dialog is shown.
+     */
     @FXML
     private void handleAddPhoto() {
         // Create a FileChooser to let the user select a photo
@@ -128,6 +185,17 @@ public class AlbumViewController {
         }
     }
 
+    /**
+     * Event handler for the "Remove Photo" button.
+     * This method is called when the user clicks the "Remove Photo" button.
+     * It removes the selected photo from the album and updates the photo list view.
+     * If no photo is selected or the user cancels the action, an error dialog is shown.
+     * If the user confirms the action, the photo is removed from the album.
+     * If an error occurs during the removal, an error dialog is shown.
+     * If the removal is successful, the updated user data is saved.
+     * If the user cancels the action, no changes are made.
+     * If the user confirms the action, the photo is removed from the album.
+     */
     @FXML
     private void handleRemovePhoto() {
         // Get the selected photo
@@ -156,6 +224,16 @@ public class AlbumViewController {
         }
     }
 
+    /**
+     * Event handler for the "Caption Photo" button.
+     * This method is called when the user clicks the "Caption Photo" button.
+     * It allows the user to enter a new caption for the selected photo.
+     * If no photo is selected, an error dialog is shown.
+     * If the user cancels the action, no changes are made.
+     * If the user enters a new caption, the photo's caption is updated and the photo list view is refreshed.
+     * If an error occurs during the update, an error dialog is shown.
+     * If the update is successful, the updated user data is saved.
+     */
     @FXML
     private void handleCaptionPhoto() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -182,6 +260,13 @@ public class AlbumViewController {
         });
     }
 
+    /**
+     * Event handler for the "Display Photo" button.
+     * This method is called when the user clicks the "Display Photo" button.
+     * It displays the selected photo in a new window with additional details.
+     * If no photo is selected, an error dialog is shown.
+     * If an error occurs while loading the photo, an error dialog is shown.
+     */
     @FXML
     private void handleDisplayPhoto() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -230,6 +315,16 @@ public class AlbumViewController {
         photoStage.show();
     }
 
+    /**
+     * Event handler for the "Add Tag" button.
+     * This method is called when the user clicks the "Add Tag" button.
+     * It allows the user to add a new tag to the selected photo.
+     * If no photo is selected, an error dialog is shown.
+     * If the user cancels the action or enters an invalid tag type or value, no changes are made.
+     * If the tag type already exists for the photo or the tag type only supports a single value,
+     * an error dialog is shown.
+     * If the tag is successfully added, the photo list view is updated and the user data is saved.
+     */
     @FXML
     private void handleAddTag() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -269,6 +364,16 @@ public class AlbumViewController {
         }
     }    
     
+    /**
+     * Method to show a dialog for selecting a tag type.
+     * The dialog allows the user to choose from existing tag types or add a new one.
+     * If the user chooses to add a new tag type, they are prompted to enter the new type and multiplicity.
+     * If the user cancels or enters invalid input, null is returned.
+     * If the user selects an existing tag type, the tag type and multiplicity are returned.
+     * @return A Pair containing the tag type and its multiplicity, or null if the user cancels or enters invalid input.
+     * @param String tagType The tag type entered by the user.
+     * @param Integer multiplicity The multiplicity entered by the user.
+     */
     private Pair<String, Integer> showTagTypeDialog() {
         Map<String, Integer> tagTypes = currentUser.getTagTypes();
         List<String> choices = new ArrayList<>(tagTypes.keySet());
@@ -317,6 +422,13 @@ public class AlbumViewController {
         return null; // User cancelled or did not enter valid input
     }
     
+    /**
+     * Method to ask the user for the multiplicity of a new tag type.
+     * The user is prompted to enter the multiplicity as an integer.
+     * If the user cancels or enters invalid input, null is returned.
+     * @param tagType The tag type for which the user is entering the multiplicity.
+     * @return The multiplicity entered by the user, or null if the user cancels or enters invalid input.
+     */
     private Integer askForMultiplicity(String tagType) {
         TextInputDialog multiplicityDialog = new TextInputDialog("1");
         multiplicityDialog.setTitle("Tag Multiplicity");
@@ -335,6 +447,14 @@ public class AlbumViewController {
         return null; // User canceled
     }    
 
+    /**
+     * Method to show a dialog for entering a tag value.
+     * The dialog prompts the user to enter a value for the given tag type.
+     * If the user cancels or enters an empty value, null is returned.
+     * If the user enters a valid value, the value is returned.
+     * @param tagType The tag type for which the user is entering the value.
+     * @return The tag value entered by the user, or null if the user cancels or enters an empty value.
+     */
     private String showTagValueDialog(String tagType) {
         // Create the dialog
         TextInputDialog dialog = new TextInputDialog();
@@ -347,6 +467,16 @@ public class AlbumViewController {
         return result.orElse(null); // Return the entered tag value or null if canceled
     }
 
+    /**
+     * Event handler for the "Delete Tag" button.
+     * This method is called when the user clicks the "Delete Tag" button.
+     * It allows the user to delete a tag from the selected photo.
+     * If no photo is selected or the photo has no tags, an error dialog is shown.
+     * If the user cancels the action, no changes are made.
+     * If the user selects a tag to delete, the tag is removed from the photo and the photo list view is updated.
+     * If an error occurs during the deletion, an error dialog is shown.
+     * If the deletion is successful, the updated user data is saved.
+     */
     @FXML
     private void handleDeleteTag() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -386,6 +516,16 @@ public class AlbumViewController {
         });
     }
 
+    /**
+     * Event handler for the "Copy Photo" button.
+     * This method is called when the user clicks the "Copy Photo" button.
+     * It allows the user to copy the selected photo to another album.
+     * If no photo is selected, an error dialog is shown.
+     * If the user cancels the action or there are no other albums to copy to, an error dialog is shown.
+     * If the user selects an album to copy the photo to, the photo is copied to the destination album.
+     * If the destination album already contains the photo, an error dialog is shown.
+     * If the photo is successfully copied, a confirmation dialog is shown and the user data is saved.
+     */
     @FXML
     private void handleCopyPhoto() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -437,6 +577,10 @@ public class AlbumViewController {
         }
     }
     
+    /**
+     * Method to show a confirmation dialog with the given message.
+     * @param message The message to display in the dialog.
+     */
     private void showConfirmationDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
@@ -445,6 +589,17 @@ public class AlbumViewController {
         alert.showAndWait();
     }
 
+    /**
+     * Event handler for the "Move Photo" button.
+     * This method is called when the user clicks the "Move Photo" button.
+     * It allows the user to move the selected photo to another album.
+     * If no photo is selected, an error dialog is shown.
+     * If there are no other albums to move to, an error dialog is shown.
+     * If the user cancels the action, no changes are made.
+     * If the user selects an album to move the photo to, the photo is moved to the destination album.
+     * If the destination album already contains the photo, an error dialog is shown.
+     * If the photo is successfully moved, a confirmation dialog is shown and the user data is saved.
+     */
     @FXML
     private void handleMovePhoto() {
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
@@ -495,6 +650,12 @@ public class AlbumViewController {
         }
     }
 
+    /**
+     * Event handler for the "Slideshow" button.
+     * This method is called when the user clicks the "Slideshow" button.
+     * It opens a new window to display a slideshow of the photos in the album.
+     * If there are no photos in the album, an error dialog is shown.
+     */
     @FXML
     private void handleSlideshow() {
         if (selectedAlbum.getPhotos().isEmpty()) {
@@ -555,6 +716,11 @@ public class AlbumViewController {
         slideshowStage.show();
     }
 
+    /**
+     * Event handler for the "Quit" button.
+     * This method is called when the user clicks the "Quit" button.
+     * It saves the current user data and closes the album view window.
+     */
     @FXML
     private void handleQuit() {
         // Save the current state before quitting
@@ -565,6 +731,11 @@ public class AlbumViewController {
         currentStage.close();
     }
 
+    /**
+     * Event handler for the "Back to Albums" button.
+     * This method is called when the user clicks the "Back to Albums" button.
+     * It saves the current user data and opens the UserView window.
+     */
     @FXML
     private void handleBackToAlbums() {
         // Save the current user's data first
@@ -594,6 +765,11 @@ public class AlbumViewController {
         }
     }
 
+    /**
+     * Event handler for the "Logout" button.
+     * This method is called when the user clicks the "Logout" button.
+     * It saves the current user data, closes the album view window, and opens the login window.
+     */
     @FXML
     private void handleLogout() {
         // Save the current state before logging out
@@ -607,6 +783,10 @@ public class AlbumViewController {
         openLoginWindow();
     }
 
+    /**
+     * Method to open the login window.
+     * This method is called when the user logs out.
+     */
     private void openLoginWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
@@ -621,7 +801,10 @@ public class AlbumViewController {
         }
     }
 
-    // Method to show an error dialog
+    /**
+     * Method to show an error dialog with the given message.
+     * @param message The error message to display in the dialog.
+     */
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
