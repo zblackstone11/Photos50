@@ -35,6 +35,7 @@
             <Button text="Logout" onAction="#handleLogout"/>
             <Button text="Quit" onAction="#handleQuit"/>
             <Button text="Back to User View" onAction="#handleBackToUserView"/>
+            <Button text="Clear" onAction="#handleClear"/>
         </HBox>
     </bottom>
 </BorderPane>

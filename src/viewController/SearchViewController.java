@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import model.Album;
 import model.DataManager;
 import model.Photo;
 import model.User;
@@ -18,6 +19,9 @@ import model.User;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SearchViewController {
@@ -46,15 +50,39 @@ public class SearchViewController {
         tagSearchType.setItems(FXCollections.observableArrayList("Single", "Conjunctive", "Disjunctive"));
     }
 
-    // Method to handle searching by date range
     @FXML
     private void handleSearchByDate() {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
-        // Implement the search logic and update searchResultsView
-        // Check all albums of the current user for photos that fall within the date range
-        // Add the photos to searchResultsView
-        // If no photos are found, show an error dialog
+
+        if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
+            showErrorDialog("Please select a valid start and end date.");
+            return;
+        }
+
+        // Convert LocalDate to LocalDateTime at the start of the start day and the end of the end day
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+        List<Photo> matchingPhotos = new ArrayList<>();
+
+        for (Album album : currentUser.getAlbums()) {
+            for (Photo photo : album.getPhotos()) {
+                LocalDateTime photoDate = photo.getDate();
+                if ((photoDate.isEqual(startDateTime) || photoDate.isAfter(startDateTime)) &&
+                    (photoDate.isEqual(endDateTime) || photoDate.isBefore(endDateTime))) {
+                    matchingPhotos.add(photo);
+                }
+            }
+        }
+
+        if (matchingPhotos.isEmpty()) {
+            showErrorDialog("No photos found in the specified date range.");
+        } else {
+            searchResultsView.getItems().setAll(matchingPhotos);
+            // Make sure your ListView is set up to display photos appropriately,
+            // possibly by setting a custom cell factory.
+        }
     }
 
     // Method to handle searching by tag
@@ -77,6 +105,23 @@ public class SearchViewController {
         // Close the SearchView window
     }
 
+    @FXML
+    private void handleClear() {
+        // Reset date pickers
+        startDatePicker.setValue(null);
+        endDatePicker.setValue(null);
+
+        // Reset tag fields
+        tag1TypeField.setText("");
+        tag1ValueField.setText("");
+        tag2TypeField.setText("");
+        tag2ValueField.setText("");
+        tagSearchType.setValue(null); // Reset the ComboBox selection
+
+        // Clear the search results
+        searchResultsView.getItems().clear();
+    }
+    
     @FXML
     private void handleLogout() {
     // Retrieve the map of users
