@@ -1,7 +1,5 @@
 package app;
 
-// The main class for the application. This class is responsible for starting the application and initializing the stock user.
-
 import model.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +7,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Main application class for the Photos application.
+ * This class initializes and starts the JavaFX application, sets up the primary stage, and initializes
+ * default data for the application, including stock and admin users.
+ */
 public class Photos extends Application {
 
+        /**
+     * Starts the JavaFX application and sets up the primary stage with the login view.
+     * 
+     * @param primaryStage The primary stage for this application, onto which
+     *                     the application scene can be set.
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -29,17 +38,24 @@ public class Photos extends Application {
             e.printStackTrace();
         }
     }
+
+        /**
+     * The main entry point for the application.
+     * Initializes the application data, including stock and admin users, and launches the JavaFX application.
+     * 
+     * @param args The command line arguments passed to the application. Not used in this application.
+     */
     public static void main(String[] args) {
         // Initialize the application data (users, albums, photos, etc.) and stock user and admin user
         DataManager.initializeData();
         initializeStockUser();
         initializeAdminUser();
         launch(args); // Launch the JavaFX application
-
-        // Continue with application startup (showing UI, loading other users, etc.)
     }
 
-    // method to initialize the stock user
+    /**
+     * Initializes the stock user with a default album and some stock photos if it doesn't already exist.
+     */
     private static void initializeStockUser() {
         User stockUser = DataManager.loadUserData("stock");
         if (stockUser == null) {
@@ -54,7 +70,9 @@ public class Photos extends Application {
         }
     }
     
-    // method to initialize the admin user
+    /**
+     * Initializes the admin user if it doesn't already exist.
+     */
     private static void initializeAdminUser() {
         User adminUser = DataManager.loadUserData("admin");
         if (adminUser == null) {
@@ -65,7 +83,11 @@ public class Photos extends Application {
         }
     }
 
-    // method to load stock photos into the stock album
+    /**
+     * Loads stock photos into the specified album.
+     * 
+     * @param stockAlbum The album to load stock photos into.
+     */
     private static void loadStockPhotos(Album stockAlbum) {
 
         Photo photo1 = new Photo("data/Avatar.jpeg");
