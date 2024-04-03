@@ -168,8 +168,8 @@ public class Album implements Serializable {
         if (photos.isEmpty()) {
             return "N/A";
         }
-        LocalDateTime earliest = photos.get(0).getDate();
-        LocalDateTime latest = photos.get(0).getDate();
+        LocalDateTime earliest = photos.get(0).getDate(); // initialize to first photo
+        LocalDateTime latest = photos.get(0).getDate(); // initialize to first photo
         for (Photo p : photos) {
             if (p.getDate().isBefore(earliest)) {
                 earliest = p.getDate();
@@ -178,7 +178,7 @@ public class Album implements Serializable {
                 latest = p.getDate();
             }
         }
-        return "Earliest: " + earliest + "\nLatest: " + latest;
+        return "Earliest: " + earliest + "\nLatest: " + latest; // String representation of the date range
     }
 
     /**
@@ -249,7 +249,7 @@ public class Album implements Serializable {
         ArrayList<Tag> allTags = new ArrayList<>();
         for (Photo p : photos) {
             for (Tag t : p.getTags()) {
-                if (!allTags.contains(t)) {
+                if (!allTags.contains(t)) { // check if tag is already in the list in case of duplicates
                     allTags.add(t);
                 }
             }

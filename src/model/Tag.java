@@ -11,17 +11,17 @@ public class Tag implements Serializable {
     /**
      * Serial version UID for serialization.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; // 1L is generic
 
     /**
      * The name of the tag.
      */
-    private String tagName; // location, person, aspect ratio etc
+    private String tagName; // location, person, etc.
 
     /**
      * The value of the tag.
      */
-    private String tagValue; // New York, John Doe, 16:9 etc
+    private String tagValue; // New York, John Doe etc.
 
     /**
      * Constructor that takes the tag name and value.

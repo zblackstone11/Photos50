@@ -2,10 +2,8 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 
 /**
@@ -17,7 +15,7 @@ public class User implements Serializable {
      * Serial version UID for serialization.
      * This is used to ensure that the deserialization process is compatible with the serialization process.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; // Again 1L is generic
 
     /**
      * The username of the user.
@@ -82,9 +80,7 @@ public class User implements Serializable {
 
     /**
      * Getter for tag types.
-     * The map of tag types and their multiplicities.
-     * The key is the tag type, and the value is the multiplicity.
-     * The multiplicity is the number of values that a tag of that type can have.
+     * The key is the tag type, and the value is its multiplicity.
      * @return The map of tag types and their multiplicities.
      */
     public Map<String, Integer> getTagTypes() {
@@ -114,7 +110,7 @@ public class User implements Serializable {
      * @param album The album to create.
      */
     public void createAlbum(Album album) {
-        if (!albums.contains(album)) {
+        if (!albums.contains(album)) { // deal with case sensitivity elsewhere
             albums.add(album);
         }
     }
@@ -145,9 +141,23 @@ public class User implements Serializable {
      * Method to rename an album.
      * @param album The album to rename.
      * @param newName The new name of the album.
+     * @return True if the album was renamed successfully, false otherwise.
+     * If an album with the new name already exists, return false, case-insensitive comparison.
      */
-    public void renameAlbum(Album album, String newName) {
-        album.setName(newName);
+    public boolean renameAlbum(Album album, String newName) {
+        String trimmedNewName = newName.trim();
+    
+        // Check for existing album with case-insensitive comparison
+        for (Album existingAlbum : this.albums) {
+            // If the existing album is NOT the same as the album being renamed AND has the same name as the new name
+            if (!existingAlbum.equals(album) && existingAlbum.getName().equalsIgnoreCase(trimmedNewName)) {
+                // An album with the new name already exists, return false to indicate failure
+                return false;
+            }
+        }
+        // No conflicting album name found, proceed with renaming
+        album.setName(trimmedNewName);
+        return true; // Indicate success
     }
 
     /**
@@ -164,61 +174,6 @@ public class User implements Serializable {
         return null;
     }
 
-    /**
-     * Method to get albums by tag.
-     * @param tag The tag to search for.
-     * @return The list of albums that contain the specified tag.
-     */
-    public List<Album> getAlbumsByTag(Tag tag) {
-        List<Album> matchingAlbums = new ArrayList<>();
-        for (Album album : albums) {
-            for (Photo photo : album.getPhotos()) {
-                if (photo.getTags().contains(tag)) {
-                    matchingAlbums.add(album);
-                    break; // Stop searching this album if a match is found
-                }
-            }
-        }
-        return matchingAlbums;
-    }
-
-    /**
-     * Method to get albums by date range.
-     * @param startDate The start date of the range.
-     * @param endDate The end date of the range.
-     * @return The list of albums that contain photos within the specified date range.
-     */
-    public List<Album> getAlbumsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        List<Album> matchingAlbums = new ArrayList<>();
-        for (Album album : albums) {
-            for (Photo photo : album.getPhotos()) {
-                if (photo.getDate().isAfter(startDate) && photo.getDate().isBefore(endDate)) {
-                    matchingAlbums.add(album);
-                    break; // Stop searching this album if a match is found
-                }
-            }
-        }
-        return matchingAlbums;
-    }
-
-    /**
-     * Method to get albums by caption.
-     * @param caption The caption to search for.
-     * @return The list of albums that contain photos with the specified caption.
-     */
-    public List<Album> getAlbumsByCaption(String caption) {
-        List<Album> matchingAlbums = new ArrayList<>();
-        for (Album album : albums) {
-            for (Photo photo : album.getPhotos()) {
-                if (photo.getCaption().contains(caption)) {
-                    matchingAlbums.add(album);
-                    break; // Stop searching this album if a match is found
-                }
-            }
-        }
-        return matchingAlbums;
-    }
-
     // Data persistence methods. Save and load user data. Use serialization and deserialization. Linked to DataManager.
 
     /**
@@ -227,6 +182,7 @@ public class User implements Serializable {
      * This method is called when the user logs out.
      */
     public void saveUserData() {
+        // Save the user data using DataManager on this user object
         DataManager.saveUserData(this);
     }
 

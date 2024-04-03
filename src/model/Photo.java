@@ -61,7 +61,7 @@ public class Photo implements Serializable {
      */
     public Photo(String filePath) {
         this.filePath = filePath;
-        this.dateTaken = getLastModificationDate(filePath);
+        this.dateTaken = getLastModificationDate(filePath); // As per the instructions, the date taken is the last modification date
         this.caption = "";
         this.tags = new ArrayList<Tag>();
     }
@@ -74,8 +74,8 @@ public class Photo implements Serializable {
     private LocalDateTime getLastModificationDate(String filePath) {
         try {
             Path path = Paths.get(filePath);
-            FileTime fileTime = Files.getLastModifiedTime(path);
-            return LocalDateTime.ofInstant(fileTime.toInstant(), ZoneId.systemDefault());
+            FileTime fileTime = Files.getLastModifiedTime(path); // Uses built-in Java NIO library to get the last modified time
+            return LocalDateTime.ofInstant(fileTime.toInstant(), ZoneId.systemDefault()); // Converts the FileTime to LocalDateTime
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -152,6 +152,7 @@ public class Photo implements Serializable {
      */
     public Image getThumbnail() {
         try {
+            // Uses JavaFX Image class to create a thumbnail of the photo with the specified width and height
             Image image = new Image(new FileInputStream(filePath), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, true, true);
             return image;
         } catch (FileNotFoundException e) {
@@ -167,7 +168,7 @@ public class Photo implements Serializable {
      */
     public boolean addTag(Tag tag) {
         if (tags.contains(tag)) {
-            return false;
+            return false; // Tag already exists no duplicates
         }
         tags.add(tag);
         return true;
@@ -192,7 +193,13 @@ public class Photo implements Serializable {
      * @return True if the photo has a tag of the specified type, false otherwise.
      */
     public boolean hasTagOfType(String tagType) {
-        return tags.stream().anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType));
+        for (Tag tag : tags) {
+            // Check if the tag type matches the specified tag type (case-insensitive)
+            if (tag.getTagName().equalsIgnoreCase(tagType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

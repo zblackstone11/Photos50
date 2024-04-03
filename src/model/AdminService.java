@@ -14,7 +14,7 @@ public class AdminService {
      * @return A list of all users in the application.
      */
     public List<User> listUsers() {
-        // Logic to list all users
+        // Get the users map from the data manager
         Map<String, User> userMap = DataManager.getUsersMap();
         return new ArrayList<>(userMap.values()); // Convert map values to a list and return
     }
@@ -25,8 +25,13 @@ public class AdminService {
      * @return True if the user was created successfully, false if the user already exists.
      */
     public static boolean createUser(String newUsername) {
-        if (DataManager.getUsersMap().containsKey(newUsername)) {
-            return false;
+        // Convert the username to lowercase
+        String newUsernameLower = newUsername.toLowerCase();
+        // Iterate over the existing usernames to check for a case-insensitive match
+        for (String existingUsername : DataManager.getUsersMap().keySet()) {
+            if (existingUsername.toLowerCase().equals(newUsernameLower)) {
+                return false; // Found a case-insensitive match, user already exists
+            }
         }
         User newUser = new User(newUsername);
         DataManager.saveUserData(newUser);

@@ -238,16 +238,17 @@ public class UserViewController {
             // Validate the new name
             if (newName.trim().isEmpty()) {
                 showErrorDialog("Album name cannot be empty.");
-            } else if (currentUser.albumExists(newName.trim())) {
+                return; // Exit early
+            }
+            boolean renameSuccess = currentUser.renameAlbum(selectedAlbum, newName);
+            if (!renameSuccess) {
+                // If renaming was not successful, it means there was a name conflict
                 showErrorDialog("An album with this name already exists.");
             } else {
-                // Rename the selected album
-                selectedAlbum.setName(newName.trim());
-    
-                // Update the TableView to reflect the name change
+                // Rename was successful, update the TableView to reflect the name change
                 populateAlbumsTable();
             }
-        });
+        });        
     }
 
     /**

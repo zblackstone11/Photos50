@@ -23,14 +23,14 @@ public class Photos extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Load the FXML file
+            // Load the FXML file for the login view using the FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            // Load the root node from the FXML file (in this case, a BorderPane)
             Parent root = loader.load();
-
-            // Set up the scene
+            // Set up the scene with the root node and add it to the stage
             Scene scene = new Scene(root);
 
-            // Configure the primary stage
+            // Configure the primary stage and show it
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -48,7 +48,9 @@ public class Photos extends Application {
     public static void main(String[] args) {
         // Initialize the application data (users, albums, photos, etc.) and stock user and admin user
         DataManager.initializeData();
+        // Initialize the stock user if it doesn't already exist
         initializeStockUser();
+        // Initialize the admin user if it doesn't already exist
         initializeAdminUser();
         launch(args); // Launch the JavaFX application
     }

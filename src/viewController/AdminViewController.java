@@ -103,7 +103,7 @@ public class AdminViewController {
                     refreshUserListView();
                 } else {
                     // Failure, show an error message
-                    showErrorDialog("Failed to create new user.");
+                    showErrorDialog("Failed to create new user. Cannot have repeat usernames.");
                 }
             } else {
                 // No username entered, show an error or do nothing
