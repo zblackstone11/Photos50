@@ -220,15 +220,29 @@ public class UserViewController {
 
     @FXML
     private void handleSearchPhotos() {
-        // Logic to handle search photos action
-        // Example: Navigate to the search view, allowing the user to specify search criteria.
-        // Need to be able to search all user albums by a date range
-        // Need to be able to search all user albums by a single tag value pair i.e. location=New York
-        // Need to be able to search all user albums by multiple tag value pairs i.e. location=New York AND person=John
-        // Need to be able to search all user albums by a disjunctive tag value pair i.e. location=New York OR location=Los Angeles
-        // Only conjunctions and disjunctions of up to 2 tags values pairs are allowed
-        // Search will need to list or display all photos that match the search criteria
-        // And then functionality to create an album from the search results
+        try {
+            // Load the FXML file for the SearchView
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/SearchView.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for the SearchView and pass the current user
+            SearchViewController searchViewController = loader.getController();
+            searchViewController.initialize(currentUser);
+
+            // Set up the scene and stage for the search view
+            Stage searchStage = new Stage();
+            searchStage.setTitle("Search Photos");
+            searchStage.setScene(new Scene(root));
+            searchStage.show();
+
+            // Optionally, you could close the current UserView window, or keep it open
+            // Stage currentStage = (Stage) albumsTableView.getScene().getWindow();
+            // currentStage.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showErrorDialog("Error opening search view: " + e.getMessage());
+        }
     }
 
     // Additional methods as needed for the controller
