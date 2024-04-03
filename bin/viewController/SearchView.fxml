@@ -2,6 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.SearchViewController">
     <top>
@@ -20,15 +21,8 @@
                 <Label text="Tag 2:"/>
                 <TextField fx:id="tag2TypeField" promptText="Type"/>
                 <TextField fx:id="tag2ValueField" promptText="Value"/>
-                <ComboBox fx:id="tagSearchType" promptText="Search Type">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="Single"/>
-                            <String fx:value="Conjunctive"/>
-                            <String fx:value="Disjunctive"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
+                    <ComboBox fx:id="tagSearchType" promptText="Search Type">
+                    </ComboBox>
                 <Button text="Search by Tag" onAction="#handleSearchByTag"/>
             </HBox>
         </VBox>

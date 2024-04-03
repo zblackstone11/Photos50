@@ -1,5 +1,6 @@
 package viewController;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
@@ -33,7 +34,7 @@ public class SearchViewController {
 
     public void initialize(User currentUser) {
         this.currentUser = currentUser;
-        // Additional initialization tasks
+        tagSearchType.setItems(FXCollections.observableArrayList("Single", "Conjunctive", "Disjunctive"));
     }
 
     // Method to handle searching by date range
