@@ -11,12 +11,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import model.DataManager;
 import model.Photo;
 import model.User;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class SearchViewController {
 
@@ -77,15 +79,35 @@ public class SearchViewController {
 
     @FXML
     private void handleLogout() {
-        // Logic for logging out and returning to the login view
-        // Close the current SearchView window and open the LoginView window
-        // But save the current user's data first
+    // Retrieve the map of users
+        Map<String, User> usersMap = DataManager.getUsersMap();
+
+        // Iterate over the map and save each user's data
+        for (User user : usersMap.values()) {
+            DataManager.saveUserData(user);
+        }
+        // Close the current user window
+        Stage currentStage = (Stage) searchResultsView.getScene().getWindow();
+        currentStage.close();
+    
+        // Open the login window
+        openLoginWindow();
     }
 
     @FXML
     private void handleQuit() {
-        // Logic for quitting the application
-        // Save the current user's data and close the application
+        // Logic to handle quit action
+        // Example: Save any changes and close the application
+        // Retrieve the map of users
+        Map<String, User> usersMap = DataManager.getUsersMap();
+
+        // Iterate over the map and save each user's data
+        for (User user : usersMap.values()) {
+            DataManager.saveUserData(user);
+        }
+        // Close the entire application
+        Stage stage = (Stage) searchResultsView.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
@@ -123,4 +145,19 @@ public class SearchViewController {
         alert.setContentText(message);
         alert.showAndWait();
     } 
+
+    // Method to go back to the login view
+    private void openLoginWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Login");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            // Handle IOException, possibly with an error dialog
+            showErrorDialog("Error opening login window: " + e.getMessage());
+        }
+    }
 }
