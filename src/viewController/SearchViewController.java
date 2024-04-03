@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,6 +24,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class SearchViewController {
 
@@ -96,13 +98,58 @@ public class SearchViewController {
         // Implement the search logic based on searchType and update searchResultsView
     }
 
-    // Method to create an album from the search results
     @FXML
     private void handleCreateAlbumFromResults() {
-        // Implement the logic to create a new album from the items in searchResultsView
-        // Show a dialog to get the name of the new album
-        // Add the new album to the current user's list of albums
-        // Close the SearchView window
+        // Check if the search results view is empty
+        if (searchResultsView.getItems().isEmpty()) {
+            showErrorDialog("Cannot create an empty album. Please perform a search first or go back to User View.");
+            return;
+        }
+
+        // Show dialog to get the new album name
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Create Album from Results");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Please enter the name for the new album:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            String albumName = result.get().trim();
+            // Check for empty name
+            if (albumName.isEmpty()) {
+                showErrorDialog("Album name cannot be empty.");
+                return;
+            }
+
+            // Check for duplicate name
+            if (currentUser.getAlbums().stream().anyMatch(album -> album.getName().equalsIgnoreCase(albumName))) {
+                showErrorDialog("An album with this name already exists.");
+                return;
+            }
+
+            // Create the new album and add the photos from the search results
+            Album newAlbum = new Album(albumName);
+            for (Photo photo : searchResultsView.getItems()) {
+                newAlbum.addPhoto(photo);
+            }
+
+            // Add the new album to the user's list
+            currentUser.createAlbum(newAlbum);
+
+            // Save changes
+            DataManager.saveUserData(currentUser);
+
+            // Show success dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Album Created");
+            alert.setHeaderText(null);
+            alert.setContentText("Album created successfully. Go back to User View to see the new album.");
+            alert.showAndWait();
+
+        } else {
+            // User cancelled the dialog
+            // Do nothing
+        }
     }
 
     @FXML
@@ -121,7 +168,7 @@ public class SearchViewController {
         // Clear the search results
         searchResultsView.getItems().clear();
     }
-    
+
     @FXML
     private void handleLogout() {
     // Retrieve the map of users
