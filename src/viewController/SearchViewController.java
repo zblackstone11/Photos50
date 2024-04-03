@@ -50,6 +50,9 @@ public class SearchViewController {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         // Implement the search logic and update searchResultsView
+        // Check all albums of the current user for photos that fall within the date range
+        // Add the photos to searchResultsView
+        // If no photos are found, show an error dialog
     }
 
     // Method to handle searching by tag
@@ -67,16 +70,22 @@ public class SearchViewController {
     @FXML
     private void handleCreateAlbumFromResults() {
         // Implement the logic to create a new album from the items in searchResultsView
+        // Show a dialog to get the name of the new album
+        // Add the new album to the current user's list of albums
+        // Close the SearchView window
     }
 
     @FXML
     private void handleLogout() {
         // Logic for logging out and returning to the login view
+        // Close the current SearchView window and open the LoginView window
+        // But save the current user's data first
     }
 
     @FXML
     private void handleQuit() {
         // Logic for quitting the application
+        // Save the current user's data and close the application
     }
 
     @FXML
@@ -114,5 +123,4 @@ public class SearchViewController {
         alert.setContentText(message);
         alert.showAndWait();
     } 
-
 }
