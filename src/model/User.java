@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 /**
  * Class to represent a user in the Photos application.
+ * @author ZB SL
  */
 public class User implements Serializable {
 

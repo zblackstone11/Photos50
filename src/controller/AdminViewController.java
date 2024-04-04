@@ -18,6 +18,7 @@ import java.util.Optional;
 
 /**
  * Controller class for the admin view.
+ * @author ZB SL
  */
 public class AdminViewController {
 

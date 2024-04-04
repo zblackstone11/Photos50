@@ -13,6 +13,7 @@ import model.User;
 
 /**
  * Controller class for the LoginView FXML file.
+ * @author ZB SL
  */
 public class LoginController {
 

@@ -39,6 +39,7 @@ import model.Tag;
 
 /**
  * Controller class for the album view.
+ * @author ZB SL
  */
 public class AlbumViewController {
 

@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 
 /**
  * Class to represent a photo in the Photos application.
+ * @author ZB SL
  */
 public class Photo implements Serializable {
 

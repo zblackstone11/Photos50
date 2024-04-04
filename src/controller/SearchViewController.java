@@ -29,6 +29,7 @@ import java.util.Set;
 
 /**
  * SearchViewController class for the search view.
+ * @author ZB SL
  */
 public class SearchViewController {
 

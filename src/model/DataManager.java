@@ -8,6 +8,7 @@ import java.util.HashMap;
  * Class to manage data for the Photos application.
  * This class is responsible for saving and loading user data, albums, and photos.
  * It uses serialization to save and load data from disk.
+ * @author ZB SL
  */
 public class DataManager {
 

@@ -21,6 +21,7 @@ import model.User;
 
 /**
  * Controller class for the UserView FXML file.
+ * @author ZB SL
  */
 public class UserViewController {
 

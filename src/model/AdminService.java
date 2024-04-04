@@ -6,6 +6,7 @@ import java.util.Map;
 
 /**
  * Service class for the admin user. This class provides methods to list all users, create a new user, and delete an existing user.
+ *  * @author ZB SL
  */
 public class AdminService {
 

@@ -9,6 +9,7 @@ import java.util.Objects;
 /**
  * Class to represent an album in the Photos application.
  * An album has a name, a list of photos, and metadata including the date created and date last modified.
+ * @author ZB SL
  */
 public class Album implements Serializable {
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 
 /**
  * Class to represent a tag in the Photos application.
+ * @author ZB SL
  */
 public class Tag implements Serializable {
 

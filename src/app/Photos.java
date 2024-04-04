@@ -11,6 +11,7 @@ import javafx.stage.Stage;
  * Main application class for the Photos application.
  * This class initializes and starts the JavaFX application, sets up the primary stage, and initializes
  * default data for the application, including stock and admin users.
+ * @author ZB
  */
 public class Photos extends Application {
 
