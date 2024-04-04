@@ -152,6 +152,7 @@ public class AlbumViewController {
      * Event handler for the "Add Photo" button.
      * This method is called when the user clicks the "Add Photo" button.
      * It opens a FileChooser dialog to let the user select a photo to add to the album.
+     * Only types of image files are allowed (e.g., BMP, GIF, JPG, PNG).
      * The selected photo is added to the album and the photo list view is updated.
      * If the user cancels the dialog or an error occurs, an error dialog is shown.
      */
@@ -164,6 +165,7 @@ public class AlbumViewController {
         fileChooser.setTitle("Select Photo");
 
         // Set the initial directory, e.g., user's home or any specific path
+        // Should be good for windows, linux, and mac systems, a lot hinges on this...
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         // Filter to only show image files
@@ -202,7 +204,7 @@ public class AlbumViewController {
      */
     @FXML
     private void handleRemovePhoto() {
-        // Get the selected photo
+        // Get the selected photo using the ListView selection model
         Photo selectedPhoto = photoListView.getSelectionModel().getSelectedItem();
 
         // Check if a photo is selected
@@ -214,6 +216,7 @@ public class AlbumViewController {
         // Confirm the action with the user
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to remove the selected photo?", ButtonType.YES, ButtonType.NO);
         confirmAlert.setHeaderText("Confirm Photo Removal");
+        // Show and wait for the user's response (Yes/No) to the confirmation dialog box. Store the result in an Optional<ButtonType> object.
         Optional<ButtonType> result = confirmAlert.showAndWait();
 
         if (result.isPresent() && result.get() == ButtonType.YES) {
@@ -255,7 +258,7 @@ public class AlbumViewController {
         Optional<String> result = dialog.showAndWait();
 
         result.ifPresent(caption -> {
-            // Set the new caption and update the ListView
+            // Set the new caption and update the ListView using a Consumer block lambda, we don't need to return anything
             selectedPhoto.setCaption(caption);
             photoListView.refresh();
 
@@ -267,7 +270,7 @@ public class AlbumViewController {
     /**
      * Event handler for the "Display Photo" button.
      * This method is called when the user clicks the "Display Photo" button.
-     * It displays the selected photo in a new window with additional details.
+     * It displays the selected photo in a new window with additional details like caption, date, and tags.
      * If no photo is selected, an error dialog is shown.
      * If an error occurs while loading the photo, an error dialog is shown.
      */
@@ -285,26 +288,28 @@ public class AlbumViewController {
         photoStage.setTitle("Photo Display");
 
         // Use VBox for the layout
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(10); // Spacing between nodes in the layout (10 pixels)
         layout.setAlignment(Pos.CENTER);
 
         // Create an ImageView for the photo
         Image image;
         try {
+            // Load the image from the file path using FileInputStream and create an ImageView
             image = new Image(new FileInputStream(selectedPhoto.getFilePath()));
         } catch (FileNotFoundException e) {
             showErrorDialog("Error loading photo: " + e.getMessage());
             return;
         }
         ImageView imageView = new ImageView(image);
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(600); // Might be better to use a ScrollPane for large images
+        imageView.setPreserveRatio(true); // Preserve the aspect ratio of the image
+        imageView.setFitHeight(600); // Might be better to use a ScrollPane for large images but this will do for now
 
         // Create labels for the caption and date-time
         Label captionLabel = new Label("Caption: " + selectedPhoto.getCaption());
         Label dateLabel = new Label("Date: " + selectedPhoto.getDate().toString());
 
         // Create a label or a list for tags
+        // Map each tag to a string representation of the tag (e.g., "TagType: TagValue") using a lambda expression and collect them into a single string
         String tagString = selectedPhoto.getTags().stream()
                                         .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
                                         .collect(Collectors.joining(", "));
@@ -348,8 +353,9 @@ public class AlbumViewController {
         Integer multiplicity = tagTypeAndMultiplicity.getValue();
     
         // Now check if the tag type supports multiple values
+        // Either the tag type does not exist for the photo or it supports multiple values
         if (multiplicity > 1 || !selectedPhoto.hasTagOfType(tagType)) {
-            // Get tag value
+            // Get tag value from user input using a dialog method
             String tagValue = showTagValueDialog(tagType);
             if (tagValue == null || tagValue.isBlank()) {
                 return; // User canceled or entered an invalid tag value
@@ -357,13 +363,13 @@ public class AlbumViewController {
     
             // Add tag to the photo
             Tag newTag = new Tag(tagType, tagValue);
-            if (selectedPhoto.addTag(newTag)) {
+            if (selectedPhoto.addTag(newTag)) { // Method returns true if tag was added successfully (no duplicates)
                 photoListView.refresh(); // Update the ListView to show the new tag
                 DataManager.saveUserData(currentUser); // Save changes
             } else {
                 showErrorDialog("This tag already exists for the selected photo.");
             }
-        } else {
+        } else { // From higher up in the method
             showErrorDialog("This tag type only supports a single value, which already exists for this photo.");
         }
     }    
@@ -379,13 +385,14 @@ public class AlbumViewController {
      * @param Integer multiplicity The multiplicity entered by the user.
      */
     private Pair<String, Integer> showTagTypeDialog() {
-        Map<String, Integer> tagTypes = currentUser.getTagTypes();
-        List<String> choices = new ArrayList<>(tagTypes.keySet());
+        Map<String, Integer> tagTypes = currentUser.getTagTypes(); // Get the user's tag types and multiplicity as a map
+        List<String> choices = new ArrayList<>(tagTypes.keySet()); // Get the tag types as a list of choices
     
         // First, ask if the user wants to add a new tag type
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Add New Tag Type");
         alert.setHeaderText("Do you want to add a new tag type?");
+        // Would be better to show yes or no buttons but this will do for now
         alert.setContentText("Choose 'OK' to add a new tag type or 'Cancel' to select from existing ones.");
     
         Optional<ButtonType> response = alert.showAndWait();
@@ -400,10 +407,11 @@ public class AlbumViewController {
             Optional<String> newTypeResult = newTypeDialog.showAndWait();
             if (newTypeResult.isPresent()) {
                 String newType = newTypeResult.get();
-                Integer multiplicity = askForMultiplicity(newType);
+                Integer multiplicity = askForMultiplicity(newType); // Another method below, asks for multiplicity
                 if (multiplicity != null) {
                     // Add the new type and its multiplicity to the user's tag types
                     tagTypes.put(newType, multiplicity);
+                    // Update the user's tag types and save the data
                     currentUser.setTagTypes(tagTypes);
                     DataManager.saveUserData(currentUser);
                     return new Pair<>(newType, multiplicity);
@@ -422,8 +430,7 @@ public class AlbumViewController {
                 return new Pair<>(selectedType, tagTypes.get(selectedType));
             }
         }
-    
-        return null; // User cancelled or did not enter valid input
+        return null; // User cancelled or did not enter valid input as in tag was already in the list
     }
     
     /**
@@ -496,6 +503,7 @@ public class AlbumViewController {
             return;
         }
 
+        // Same as above, map each tag to a string representation and collect them into a list using a lambda expression
         List<String> tagDescriptions = tags.stream()
                                             .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
                                             .collect(Collectors.toList());
@@ -506,6 +514,8 @@ public class AlbumViewController {
         dialog.setContentText("Tags:");
 
         Optional<String> result = dialog.showAndWait();
+        // If the user selects a tag to delete, remove it from the photo and save the changes
+        // Complex structure here, consider breaking it down into smaller methods
         result.ifPresent(selectedTagDescription -> {
             Tag tagToDelete = tags.stream()
                                 .filter(tag -> (tag.getTagName() + ": " + tag.getTagValue()).equals(selectedTagDescription))
@@ -573,7 +583,7 @@ public class AlbumViewController {
     
             Photo photoCopy = new Photo(selectedPhoto.getFilePath());
             photoCopy.setCaption(selectedPhoto.getCaption());
-            photoCopy.setTags(new ArrayList<>(selectedPhoto.getTags())); // Assuming you have a suitable constructor or method
+            photoCopy.setTags(new ArrayList<>(selectedPhoto.getTags())); // Copy the tags using a new ArrayList and the getTags method
             destinationAlbum.addPhoto(photoCopy);
     
             DataManager.saveUserData(currentUser);
@@ -673,7 +683,7 @@ public class AlbumViewController {
         BorderPane borderPane = new BorderPane();
         ImageView imageView = new ImageView();
         imageView.setPreserveRatio(true);
-        imageView.setFitHeight(500); // Adjust size as needed
+        imageView.setFitHeight(600); // Adjust size as needed, might be better to use a ScrollPane for large images
         borderPane.setCenter(imageView);
 
         HBox navigationBox = new HBox();
@@ -681,22 +691,25 @@ public class AlbumViewController {
         navigationBox.setSpacing(10);
         Button prevButton = new Button("Previous");
         Button nextButton = new Button("Next");
+        // Add the navigation buttons to the bottom of the BorderPane
         navigationBox.getChildren().addAll(prevButton, nextButton);
+        // Set the HBox with the navigation buttons at the bottom of the BorderPane
         borderPane.setBottom(navigationBox);
 
         // Initial photo display
+        // The  = {0} is a way to use a mutable integer in a lambda expression
         int[] photoIndex = {0};
         try {
             imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
         } catch (FileNotFoundException e) {
-            showErrorDialog(e.getMessage());
-            
+            showErrorDialog(e.getMessage());  
         }
-
+        
+        // Event handlers for the navigation buttons
         prevButton.setOnAction(e -> {
             if (photoIndex[0] > 0) {
                 photoIndex[0]--;
-                try {
+                try { // Try to load the image from the file path
                     imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
                 } catch (FileNotFoundException ex) {
                     showErrorDialog(ex.getMessage());

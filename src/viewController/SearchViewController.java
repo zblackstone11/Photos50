@@ -159,7 +159,7 @@ public class SearchViewController {
             showErrorDialog("Please select a search type.");
             return;
         }
-        // Input validation for "Single" search type
+        // Input validation for "Single" search type, seems to cover all cases
         if (searchType.equals("Single")) {
             if ((tag1Type.isEmpty() || tag1Value.isEmpty()) && (tag2Type.isEmpty() || tag2Value.isEmpty())) {
                 showErrorDialog("Please fill in at least one tag type-value pair for single tag search.");
