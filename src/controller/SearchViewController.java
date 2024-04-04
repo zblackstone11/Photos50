@@ -108,12 +108,13 @@ public class SearchViewController {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
 
+        // If either date is null or the start date is after the end date, show an error dialog
         if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
             showErrorDialog("Please select a valid start and end date.");
             return;
         }
 
-        // Convert LocalDate to LocalDateTime at the start of the start day and the end of the end day
+        // Convert LocalDate to LocalDateTime at the start of the start day and the end of the end day to work with photos
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
@@ -123,20 +124,18 @@ public class SearchViewController {
             for (Photo photo : album.getPhotos()) {
                 LocalDateTime photoDate = photo.getDate();
                 if ((photoDate.isEqual(startDateTime) || photoDate.isAfter(startDateTime)) &&
-                    (photoDate.isEqual(endDateTime) || photoDate.isBefore(endDateTime))) {
+                    (photoDate.isEqual(endDateTime) || photoDate.isBefore(endDateTime))) { // In the specified date range
                     matchingPhotosSet.add(photo);
                 }
             }
         }
 
-        List<Photo> matchingPhotos = new ArrayList<>(matchingPhotosSet);
+        List<Photo> matchingPhotos = new ArrayList<>(matchingPhotosSet); // Convert the Set to a List for ListView
 
         if (matchingPhotos.isEmpty()) {
             showErrorDialog("No photos found in the specified date range.");
         } else {
-            searchResultsView.getItems().setAll(matchingPhotos);
-            // Make sure your ListView is set up to display photos appropriately,
-            // possibly by setting a custom cell factory.
+            searchResultsView.getItems().setAll(matchingPhotos); // Update the list view with the matching photos
         }
     }
 
@@ -162,14 +161,22 @@ public class SearchViewController {
         }
         // Input validation for "Single" search type, seems to cover all cases
         if (searchType.equals("Single")) {
+            // Case below is if there is empty cell on both sides, tag1 and tag2, in either/both type or value
             if ((tag1Type.isEmpty() || tag1Value.isEmpty()) && (tag2Type.isEmpty() || tag2Value.isEmpty())) {
                 showErrorDialog("Please fill in at least one tag type-value pair for single tag search.");
                 return;
             }
+            // Case below is if there is an empty value cell on either side
             if ((!tag1Type.isEmpty() && tag1Value.isEmpty()) || (!tag2Type.isEmpty() && tag2Value.isEmpty())) {
                 showErrorDialog("Both tag type and value must be filled in.");
                 return;
             }
+            // Case below is if there is an empty type cell on either side
+            if ((tag1Type.isEmpty() && !tag1Value.isEmpty()) || (tag2Type.isEmpty() && !tag2Value.isEmpty())) {
+                showErrorDialog("Both tag type and value must be filled in.");
+                return;
+            }
+            // Case below is if both sides are filled in
             if ((!tag1Type.isEmpty() && !tag1Value.isEmpty()) && (!tag2Type.isEmpty() && !tag2Value.isEmpty())) {
                 showErrorDialog("Only one tag type-value pair should be filled in for single tag search.");
                 return;
@@ -178,6 +185,7 @@ public class SearchViewController {
 
         // Input validation for "Conjunctive" and "Disjunctive" search types
         if (searchType.equals("Conjunctive") || searchType.equals("Disjunctive")) {
+            // None of the fields can be empty for conjunctive/disjunctive search
             if (tag1Type.isEmpty() || tag1Value.isEmpty() || tag2Type.isEmpty() || tag2Value.isEmpty()) {
                 showErrorDialog("All fields must be filled in for conjunctive/disjunctive tag search.");
                 return;
@@ -188,7 +196,7 @@ public class SearchViewController {
 
         for (Album album : currentUser.getAlbums()) {
             for (Photo photo : album.getPhotos()) {
-                boolean matches = false;
+                boolean matches = false; // Flag to determine if the photo matches the criteria
 
                 switch (searchType) {
                     case "Single":
@@ -236,6 +244,9 @@ public class SearchViewController {
      * @return True if the photo matches the tag criteria, false otherwise.
      */
     private boolean matchesTagCriteria(Photo photo, String tagType, String tagValue) {
+        // Lambda expression to check if the photo has a tag with the specified type and value
+        // Sets all tags up as a sequential stream and checks if any of them match both the type and value of the tag being searched for
+        // Any match takes a predicate (tag) and returns a boolean
         return photo.getTags().stream()
                     .anyMatch(tag -> tag.getTagName().equalsIgnoreCase(tagType) && tag.getTagValue().equalsIgnoreCase(tagValue));
     }
@@ -250,7 +261,7 @@ public class SearchViewController {
     private void handleCreateAlbumFromResults() {
         // Check if the search results view is empty
         if (searchResultsView.getItems().isEmpty()) {
-            showErrorDialog("Cannot create an empty album. Please perform a search first or go back to User View.");
+            showErrorDialog("Cannot create an empty album. Please perform a new search first or go back to User View.");
             return;
         }
 
@@ -269,7 +280,8 @@ public class SearchViewController {
                 return;
             }
 
-            // Check for duplicate name
+            // Check for duplicate name using lambda expression
+            // Creates a sequential stream of all the albums in the current user's list and checks if any of them match the album name being searched for
             if (currentUser.getAlbums().stream().anyMatch(album -> album.getName().equalsIgnoreCase(albumName))) {
                 showErrorDialog("An album with this name already exists.");
                 return;

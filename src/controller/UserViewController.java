@@ -107,7 +107,7 @@ public class UserViewController {
     // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
 
-        // Iterate over the map and save each user's data, safer than just saving one user in case tags edited etc.
+        // Iterate over the map and save each user's data, safer than just saving one user in case tags edited etc for sync.
         for (User user : usersMap.values()) {
             DataManager.saveUserData(user);
         }
@@ -172,7 +172,7 @@ public class UserViewController {
 
             // Create the new album and add it to the user's list of albums
             Album newAlbum = new Album(albumName.trim());
-            currentUser.createAlbum(newAlbum); // Assuming createAlbum method adds the album to the user's list
+            currentUser.createAlbum(newAlbum); // createAlbum method adds the album to the user's list too
 
             // Update the TableView to reflect the new album
             populateAlbumsTable();
@@ -236,7 +236,7 @@ public class UserViewController {
     
         // Handle the user response
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(newName -> {
+        result.ifPresent(newName -> { // Use a consumer lambda to handle the user response, if present takes a consumer
             // Validate the new name
             if (newName.trim().isEmpty()) {
                 showErrorDialog("Album name cannot be empty.");
@@ -301,7 +301,7 @@ public class UserViewController {
     @FXML
     private void handleSearchPhotos() {
         try {
-            // Load the FXML file for the SearchView
+            // Load the FXML file for the SearchView, we'll handle search functionality in a separate controller/view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SearchView.fxml"));
             Parent root = loader.load();
 
