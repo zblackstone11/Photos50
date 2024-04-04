@@ -107,7 +107,7 @@ public class UserViewController {
     // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
 
-        // Iterate over the map and save each user's data
+        // Iterate over the map and save each user's data, safer than just saving one user in case tags edited etc.
         for (User user : usersMap.values()) {
             DataManager.saveUserData(user);
         }
@@ -157,7 +157,7 @@ public class UserViewController {
 
         // Show the dialog and wait for the user to enter a name
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(albumName -> {
+        result.ifPresent(albumName -> { // Use a consumer lambda to handle the user response
             // Check for empty or duplicate album names
             if (albumName.trim().isEmpty()) {
                 showErrorDialog("Album name cannot be empty.");

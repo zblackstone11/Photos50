@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -388,23 +389,26 @@ public class AlbumViewController {
     private Pair<String, Integer> showTagTypeDialog() {
         Map<String, Integer> tagTypes = currentUser.getTagTypes(); // Get the user's tag types and multiplicity as a map
         List<String> choices = new ArrayList<>(tagTypes.keySet()); // Get the tag types as a list of choices
-    
+
         // First, ask if the user wants to add a new tag type
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Add New Tag Type");
-        alert.setHeaderText("Do you want to add a new tag type?");
-        // Would be better to show yes or no buttons but this will do for now
-        alert.setContentText("Choose 'OK' to add a new tag type or 'Cancel' to select from existing ones.");
-    
+        alert.setHeaderText("Do you want to add a new tag type? 'Yes' to create a new tag type, 'No' to select from existing ones.");
+
+        // Set custom buttons for the alert dialog so that we can distinguish between Yes and No
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
         Optional<ButtonType> response = alert.showAndWait();
-    
-        if (response.isPresent() && response.get() == ButtonType.OK) {
+
+        if (response.isPresent() && response.get() == yesButton) {
             // User chose to add a new tag type
             TextInputDialog newTypeDialog = new TextInputDialog();
             newTypeDialog.setTitle("New Tag Type");
             newTypeDialog.setHeaderText("Enter the new tag type:");
             newTypeDialog.setContentText("Tag type:");
-    
+
             Optional<String> newTypeResult = newTypeDialog.showAndWait();
             if (newTypeResult.isPresent()) {
                 String newType = newTypeResult.get();
@@ -418,13 +422,13 @@ public class AlbumViewController {
                     return new Pair<>(newType, multiplicity);
                 }
             }
-        } else {
+        } else if (response.isPresent() && response.get() == noButton) {
             // User chose to select from existing tag types
             ChoiceDialog<String> dialog = new ChoiceDialog<>(null, choices);
             dialog.setTitle("Select Tag Type");
             dialog.setHeaderText("Select a tag type:");
             dialog.setContentText("Tag type:");
-    
+
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 String selectedType = result.get();
