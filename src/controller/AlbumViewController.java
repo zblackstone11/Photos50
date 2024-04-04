@@ -252,6 +252,7 @@ public class AlbumViewController {
             return;
         }
 
+        // Create a TextInputDialog to let the user enter a new caption for the photo
         TextInputDialog dialog = new TextInputDialog(selectedPhoto.getCaption());
         dialog.setTitle("Caption Photo");
         dialog.setHeaderText("Enter a new caption for the selected photo:");
@@ -446,6 +447,7 @@ public class AlbumViewController {
      * @return The multiplicity entered by the user, or null if the user cancels or enters invalid input.
      */
     private Integer askForMultiplicity(String tagType) {
+        // Create a dialog for entering the multiplicity
         TextInputDialog multiplicityDialog = new TextInputDialog("1");
         multiplicityDialog.setTitle("Tag Multiplicity");
         multiplicityDialog.setHeaderText("Enter multiplicity for '" + tagType + "':");
@@ -456,7 +458,7 @@ public class AlbumViewController {
             try {
                 return Integer.parseInt(result.get());
             } catch (NumberFormatException e) {
-                showErrorDialog("Invalid multiplicity. Please enter a number.");
+                showErrorDialog("Invalid multiplicity. Please enter an integer.");
                 return null;
             }
         }
@@ -513,6 +515,7 @@ public class AlbumViewController {
                                             .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
                                             .collect(Collectors.toList());
 
+        // Create a ChoiceDialog to let the user select a tag to delete, populate it with the tag descriptions
         ChoiceDialog<String> dialog = new ChoiceDialog<>(null, tagDescriptions);
         dialog.setTitle("Delete Tag");
         dialog.setHeaderText("Select a tag to delete:");
@@ -556,7 +559,7 @@ public class AlbumViewController {
     
         List<String> choices = new ArrayList<>();
         for (Album album : currentUser.getAlbums()) {
-            if (!album.equals(selectedAlbum)) {
+            if (!album.equals(selectedAlbum)) { // Exclude the current album from the choices to copy to
                 choices.add(album.getName());
             }
         }
@@ -586,8 +589,8 @@ public class AlbumViewController {
                 return;
             }
     
-            Photo photoCopy = new Photo(selectedPhoto.getFilePath());
-            photoCopy.setCaption(selectedPhoto.getCaption());
+            Photo photoCopy = new Photo(selectedPhoto.getFilePath()); // Create a new Photo object with the same file path
+            photoCopy.setCaption(selectedPhoto.getCaption()); // Copy the caption using the getCaption method
             photoCopy.setTags(new ArrayList<>(selectedPhoto.getTags())); // Copy the tags using a new ArrayList and the getTags method
             destinationAlbum.addPhoto(photoCopy);
     
@@ -628,9 +631,10 @@ public class AlbumViewController {
             return;
         }
 
+        // Get the list of album names available to move the photo to
         List<String> choices = new ArrayList<>();
         for (Album album : currentUser.getAlbums()) {
-            if (!album.equals(selectedAlbum)) {
+            if (!album.equals(selectedAlbum)) { // Exclude the current album from the choices
                 choices.add(album.getName());
             }
         }
@@ -660,11 +664,13 @@ public class AlbumViewController {
                 return;
             }
 
+            // Else move the photo to the destination album
             destinationAlbum.addPhoto(selectedPhoto);
+            // Remove the photo from the current album
             selectedAlbum.removePhoto(selectedPhoto);
 
-            DataManager.saveUserData(currentUser);
-            photoListView.getItems().remove(selectedPhoto);
+            DataManager.saveUserData(currentUser); // Only move from/to same user
+            photoListView.getItems().remove(selectedPhoto); // Update the photo list view
             showConfirmationDialog("Photo moved successfully to " + selectedAlbumName + ".");
         }
     }
@@ -682,15 +688,19 @@ public class AlbumViewController {
             return;
         }
 
+        // Create a new stage for the slideshow
         Stage slideshowStage = new Stage();
         slideshowStage.setTitle("Slideshow");
 
+        // Create a BorderPane layout for the slideshow
         BorderPane borderPane = new BorderPane();
+        // ImageView for displaying the photos
         ImageView imageView = new ImageView();
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(600); // Adjust size as needed, might be better to use a ScrollPane for large images
         borderPane.setCenter(imageView);
 
+        // HBox for navigation buttons
         HBox navigationBox = new HBox();
         navigationBox.setAlignment(Pos.CENTER);
         navigationBox.setSpacing(10);
@@ -710,9 +720,11 @@ public class AlbumViewController {
             showErrorDialog(e.getMessage());  
         }
         
-        // Event handlers for the navigation buttons
+        // Event handlers for the previous button
+        // For the event e, if the photoIndex is greater than 0, decrement the index and load the previous photo
         prevButton.setOnAction(e -> {
             if (photoIndex[0] > 0) {
+                // There is a photo before the current one
                 photoIndex[0]--;
                 try { // Try to load the image from the file path
                     imageView.setImage(new Image(new FileInputStream(selectedAlbum.getPhotos().get(photoIndex[0]).getFilePath())));
@@ -722,6 +734,8 @@ public class AlbumViewController {
             }
         });
 
+        // Event handler for the next button
+        // For the event e, if the photoIndex is less than the number of photos - 1, increment the index and load the next photo
         nextButton.setOnAction(e -> {
             if (photoIndex[0] < selectedAlbum.getPhotos().size() - 1) {
                 photoIndex[0]++;
@@ -760,8 +774,13 @@ public class AlbumViewController {
      */
     @FXML
     private void handleBackToAlbums() {
-        // Save the current user's data first
-        DataManager.saveUserData(currentUser);
+        // Retrieve the map of users
+        Map<String, User> usersMap = DataManager.getUsersMap();
+
+        // Iterate over the map and save each user's data
+        for (User user : usersMap.values()) {
+            DataManager.saveUserData(user);
+        }
 
         try {
             // Load the FXML file for the UserView

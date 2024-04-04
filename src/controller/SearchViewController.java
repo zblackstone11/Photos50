@@ -364,7 +364,6 @@ public class SearchViewController {
     @FXML
     private void handleQuit() {
         // Logic to handle quit action
-        // Example: Save any changes and close the application
         // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
 
@@ -404,7 +403,6 @@ public class SearchViewController {
             Stage currentStage = (Stage) searchResultsView.getScene().getWindow();
             currentStage.close();
         } catch (IOException e) {
-            e.printStackTrace();
             // Handle IOException, such as showing an error dialog
             showErrorDialog("Error returning to user view: " + e.getMessage());
         }
