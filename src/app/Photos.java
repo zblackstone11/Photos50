@@ -24,7 +24,7 @@ public class Photos extends Application {
     public void start(Stage primaryStage) {
         try {
             // Load the FXML file for the login view using the FXMLLoader
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             // Load the root node from the FXML file (in this case, a BorderPane)
             Parent root = loader.load();
             // Set up the scene with the root node and add it to the stage

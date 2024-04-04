@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.AlbumViewController">
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AlbumViewController">
     <top>
         <HBox spacing="10" alignment="CENTER">
             <padding>

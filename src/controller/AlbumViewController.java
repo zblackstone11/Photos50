@@ -1,4 +1,4 @@
-package viewController;
+package controller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -760,7 +760,7 @@ public class AlbumViewController {
 
         try {
             // Load the FXML file for the UserView
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserView.fxml"));
             Parent root = loader.load();
 
             // Get the controller for the UserView and set the current user
@@ -806,7 +806,7 @@ public class AlbumViewController {
      */
     private void openLoginWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Login");

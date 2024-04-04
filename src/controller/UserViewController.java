@@ -1,8 +1,9 @@
-package viewController;
+package controller;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableView;
@@ -269,7 +270,7 @@ public class UserViewController {
 
         // Navigate to the AlbumView, passing the selected album and the current user
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/AlbumView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AlbumView.fxml"));
             Parent root = loader.load();
 
             // Get the controller for AlbumView and set the album and user
@@ -300,7 +301,7 @@ public class UserViewController {
     private void handleSearchPhotos() {
         try {
             // Load the FXML file for the SearchView
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/SearchView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SearchView.fxml"));
             Parent root = loader.load();
 
             // Get the controller for the SearchView and pass the current user
@@ -330,7 +331,7 @@ public class UserViewController {
      */
     private void openLoginWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Login");

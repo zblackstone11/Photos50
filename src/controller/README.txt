@@ -1,0 +1,2 @@
+The controller package contains the controller classes responsible for handling user interactions, data manipulation, 
+and application logic within the application. These classes serve as the intermediaries between the view (UI) and the model (data).

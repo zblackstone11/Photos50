@@ -1,4 +1,4 @@
-package viewController;
+package controller;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -62,7 +62,7 @@ public class LoginController {
     private void openAdminView() {
         try {
             // Load the FXML file for the AdminView
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/AdminView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (from the login button, for example)
@@ -88,7 +88,7 @@ public class LoginController {
     private void openUserView(User user) {
         try {
             // Load the FXML file for the UserView
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserView.fxml"));
             Parent root = loader.load();
 
             // Get the UserViewController from the loader

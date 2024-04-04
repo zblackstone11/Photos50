@@ -1,4 +1,4 @@
-package viewController;
+package controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -146,7 +146,7 @@ public class AdminViewController {
      */
     private void openLoginWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Login");

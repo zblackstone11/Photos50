@@ -1,4 +1,4 @@
-package viewController;
+package controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -374,7 +374,7 @@ public class SearchViewController {
     private void handleBackToUserView() {
         // Logic for returning to the UserView
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/UserView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserView.fxml"));
             Parent root = loader.load();
 
             // Get the controller for UserView and set the current user
@@ -416,7 +416,7 @@ public class SearchViewController {
      */
     private void openLoginWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/viewController/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Login");

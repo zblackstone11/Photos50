@@ -4,7 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.collections.FXCollections?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.SearchViewController">
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SearchViewController">
     <top>
         <VBox spacing="10">
             <HBox spacing="10">
