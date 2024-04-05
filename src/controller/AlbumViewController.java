@@ -450,6 +450,7 @@ public class AlbumViewController {
         // Create a dialog for entering the multiplicity
         TextInputDialog multiplicityDialog = new TextInputDialog("1");
         multiplicityDialog.setTitle("Tag Multiplicity");
+        // SL: I was having trouble finding out what you ment by multiplicity of a tag type, could use a short explation on this line 
         multiplicityDialog.setHeaderText("Enter multiplicity for '" + tagType + "':");
         multiplicityDialog.setContentText("Multiplicity:");
     
@@ -772,6 +773,7 @@ public class AlbumViewController {
      * This method is called when the user clicks the "Back to Albums" button.
      * It saves the current user data and opens the UserView window.
      */
+    // not too important but the UserView is a diffrent sized window from this button then when logging in, once you notice cant un-notice. 
     @FXML
     private void handleBackToAlbums() {
         // Retrieve the map of users
