@@ -13,6 +13,14 @@ import javafx.stage.Stage;
  * default data for the application, including stock and admin users.
  * @author ZB
  */
+
+ /* Note to ZB
+  * Hey sorry I have not been woring on this, but I have finished my exams and projects and I can 100% focas on this.
+  * I have bern useing this all moring and taking in everything. 
+  * I For this initial commit I have notes that I will put around the code on comments or suggestions and not change the code itself.
+  * I will be working to implement these, and if you disagree with some of the ideas I have just let me know and I will scrape it.
+  * -SL
+  */
 public class Photos extends Application {
 
         /**

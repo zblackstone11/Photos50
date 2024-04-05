@@ -45,9 +45,17 @@ public class UserViewController {
 
     /**
      * The TableColumn for the date range of photos in the album.
+     * TODO:need a space or dash between date and time
      */
     @FXML
     private TableColumn<Album, String> dateRangeColumn;
+
+    /**
+     * The TableColumn for a preview of photos in the album.
+     * could be a good use for the final column
+    *@FXML
+    *private TableColumn<Album, IMG/Jpeg?> PreviewColumn;
+    */
 
     /**
      * The current user logged in.
