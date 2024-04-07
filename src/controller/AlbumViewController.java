@@ -180,7 +180,6 @@ public class AlbumViewController {
                     return;
                 }
             }
-    
             // Check if the photo is already in another album for the current user
             boolean photoExistsInOtherAlbum = false;
             for (Album album : currentUser.getAlbums()) {
@@ -383,6 +382,8 @@ public class AlbumViewController {
             if (selectedPhoto.addTag(newTag)) { // Method returns true if tag was added successfully (no duplicates)
                 photoListView.refresh(); // Update the ListView to show the new tag
                 DataManager.saveUserData(currentUser); // Save changes
+                // Sync photo updates across all albums defensively
+                synchronizePhotoUpdates();
             } else {
                 showErrorDialog("This tag already exists for the selected photo.");
             }
@@ -545,6 +546,8 @@ public class AlbumViewController {
                     selectedPhoto.deleteTag(tag);
                     photoListView.refresh(); // Update ListView
                     DataManager.saveUserData(currentUser); // Save changes
+                    // Sync photo updates across all albums
+                    synchronizePhotoUpdates();
                     break;
                 }
             }
