@@ -167,13 +167,15 @@ public class Photo implements Serializable {
      * @param tag The tag to add.
      * @return True if the tag was added, false otherwise.
      */
-    public boolean addTag(Tag tag) {
-        if (tags.contains(tag)) {
-            return false; // Tag already exists no duplicates
+    public boolean addTag(Tag newTag) {
+        for (Tag existingTag : tags) {
+            if (existingTag.getTagName().equalsIgnoreCase(newTag.getTagName()) && existingTag.getTagValue().equalsIgnoreCase(newTag.getTagValue())) {
+                return false; // Tag already exists, considering case-insensitivity
+            }
         }
-        tags.add(tag);
+        tags.add(newTag);
         return true;
-    }
+    }    
 
     /**
      * Method to delete a tag.
