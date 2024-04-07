@@ -37,14 +37,7 @@ public class AdminViewController {
     private void initialize() {
         refreshUserListView();
     }
-    /**
-     * For both logout and quit I had a very hard time finding them .
-     * I was halfway through creating my own before I noticed that there was one already.
-     * After searching I found it on the file menu bar, the reason I skiped over this is because I thought it was just a label. 
-     * For this I would create buttons for them on the bottom or rename/relabel it to 'Actions' or 'Exit'.
-     * Another solution could be to make it left Alignment so it does not line up with the other things on the screen.
-     */
-
+    
     /**
      * Handles the logout button click event.
      * Saves the user data and closes the current window.
@@ -126,16 +119,16 @@ public class AdminViewController {
      * Handles the delete selected user button click event.
      * Deletes the selected user from the list of users.
      */
-    /**
-     * It is possible for the user to delete the admin user from here.
-     * There should be ethier a error when a user tries to delete admin or we recreate it after, so that there will always be one.
-     */
     @FXML
     private void handleDeleteSelectedUser() {
         // Get the selected user from the TableView using getSelectionModel().getSelectedItem() and store it in a variable
         User selectedUser = userTableView.getSelectionModel().getSelectedItem();
         if (selectedUser == null) {
             showErrorDialog("No user selected.");
+            return;
+        }
+        if ("admin".equalsIgnoreCase(selectedUser.getUsername())) {
+            showErrorDialog("Cannot delete the admin user.");
             return;
         }
         // Show a confirmation dialog using an Alert with AlertType.CONFIRMATION
