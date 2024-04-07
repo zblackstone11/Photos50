@@ -417,7 +417,6 @@ public class AlbumViewController {
         alert.getButtonTypes().setAll(yesButton, noButton);
 
         Optional<ButtonType> response = alert.showAndWait();
-
         if (response.isPresent() && response.get() == yesButton) {
             // User chose to add a new tag type
             TextInputDialog newTypeDialog = new TextInputDialog();
@@ -427,7 +426,13 @@ public class AlbumViewController {
 
             Optional<String> newTypeResult = newTypeDialog.showAndWait();
             if (newTypeResult.isPresent()) {
-                String newType = newTypeResult.get();
+                String newType = newTypeResult.get().trim();
+                // Check if the new tag type already exists in a case-insensitive manner
+                boolean typeExists = tagTypes.keySet().stream().anyMatch(existingType -> existingType.equalsIgnoreCase(newType));
+                if (typeExists) {
+                    showErrorDialog("A tag type with this name already exists. Please enter a different name.");
+                    return null; // Prevent adding the new tag type
+                }
                 Integer multiplicity = askForMultiplicity(newType); // Another method below, asks for multiplicity
                 if (multiplicity != null) {
                     // Add the new type and its multiplicity to the user's tag types
