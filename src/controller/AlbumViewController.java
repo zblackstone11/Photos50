@@ -160,35 +160,49 @@ public class AlbumViewController {
      */
     @FXML
     private void handleAddPhoto() {
-        // Create a FileChooser to let the user select a photo
+        // Open a FileChooser dialog to select a photo file
         FileChooser fileChooser = new FileChooser();
-
-        // Set the title for the FileChooser
+        // Set the title
         fileChooser.setTitle("Select Photo");
-
-        // Set the initial directory, e.g., user's home or any specific path
-        // Should be good for windows, linux, and mac systems, a lot hinges on this...
+        // Set the initial directory to the user's home directory
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-
-        // Filter to only show image files
-        fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Image Files", "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png")
-        );
-
-        // Show open file dialog and get the selected file
+        // Set the extension filters to allow only image files (BMP, GIF, JPG, JPEG, PNG)
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png"));
+        // Show the dialog and wait for the user to select a file
         File file = fileChooser.showOpenDialog(null);
-
+    
+        // Check if a file was selected
         if (file != null) {
-            // Create a new Photo object from the selected file
+            // Check if the photo is already in the current album
+            for (Photo photo : selectedAlbum.getPhotos()) {
+                if (photo.getFilePath().equals(file.getAbsolutePath())) {
+                    showErrorDialog("The photo is already in this album.");
+                    return;
+                }
+            }
+    
+            // Check if the photo is already in another album for the current user
+            boolean photoExistsInOtherAlbum = false;
+            for (Album album : currentUser.getAlbums()) {
+                for (Photo photo : album.getPhotos()) {
+                    if (photo.getFilePath().equals(file.getAbsolutePath()) && !album.equals(selectedAlbum)) {
+                        Alert warningAlert = new Alert(Alert.AlertType.WARNING, "This photo is already in another of your album(s). Adding it here will overwrite the old tags and caption. Continue?", ButtonType.OK, ButtonType.CANCEL);
+                        warningAlert.setHeaderText("Photo Already Exists");
+                        Optional<ButtonType> warningResult = warningAlert.showAndWait();
+                        if (warningResult.isPresent() && warningResult.get() == ButtonType.CANCEL) {
+                            return;
+                        }
+                        photoExistsInOtherAlbum = true;
+                        break;
+                    }
+                }
+                if (photoExistsInOtherAlbum) break;
+            }
+    
+            // If the photo does not exist in any other album or the user chose to proceed
             Photo newPhoto = new Photo(file.getAbsolutePath());
-
-            // Add the photo to the current album
             selectedAlbum.addPhoto(newPhoto);
-
-            // Update the photo list view to include the new photo
             photoListView.getItems().setAll(selectedAlbum.getPhotos());
-
-            // Save the updated user data
             DataManager.saveUserData(currentUser);
         }
     }
@@ -510,33 +524,31 @@ public class AlbumViewController {
             showErrorDialog("This photo has no tags to delete.");
             return;
         }
+        // Convert tag list to a list of string descriptions
+        List<String> tagDescriptions = new ArrayList<>();
+        for (Tag tag : tags) {
+            tagDescriptions.add(tag.getTagName() + ": " + tag.getTagValue());
+        }
 
-        // Same as above, map each tag to a string representation and collect them into a list using a lambda expression
-        List<String> tagDescriptions = tags.stream()
-                                            .map(tag -> tag.getTagName() + ": " + tag.getTagValue())
-                                            .collect(Collectors.toList());
-
-        // Create a ChoiceDialog to let the user select a tag to delete, populate it with the tag descriptions
+        // Create and show choice dialog for tag deletion
         ChoiceDialog<String> dialog = new ChoiceDialog<>(null, tagDescriptions);
         dialog.setTitle("Delete Tag");
         dialog.setHeaderText("Select a tag to delete:");
         dialog.setContentText("Tags:");
-
         Optional<String> result = dialog.showAndWait();
-        // If the user selects a tag to delete, remove it from the photo and save the changes
-        // Complex structure here, consider breaking it down into smaller methods
-        result.ifPresent(selectedTagDescription -> {
-            Tag tagToDelete = tags.stream()
-                                .filter(tag -> (tag.getTagName() + ": " + tag.getTagValue()).equals(selectedTagDescription))
-                                .findFirst()
-                                .orElse(null);
 
-            if (tagToDelete != null) {
-                selectedPhoto.deleteTag(tagToDelete);
-                photoListView.refresh(); // Update the ListView to reflect the tag deletion
-                DataManager.saveUserData(currentUser); // Save the changes
+        // Process the result
+        if (result.isPresent()) {
+            String selectedTagDescription = result.get();
+            for (Tag tag : tags) {
+                if ((tag.getTagName() + ": " + tag.getTagValue()).equals(selectedTagDescription)) {
+                    selectedPhoto.deleteTag(tag);
+                    photoListView.refresh(); // Update ListView
+                    DataManager.saveUserData(currentUser); // Save changes
+                    break;
+                }
             }
-        });
+        }
     }
 
     /**
@@ -760,6 +772,9 @@ public class AlbumViewController {
      */
     @FXML
     private void handleQuit() {
+        // Synchronize photo updates across all albums before quitting
+        synchronizePhotoUpdates();
+
         // Save the current state before quitting
         DataManager.saveUserData(currentUser);
 
@@ -776,6 +791,10 @@ public class AlbumViewController {
     // not too important but the UserView is a diffrent sized window from this button then when logging in, once you notice cant un-notice. 
     @FXML
     private void handleBackToAlbums() {
+
+        // Synchronize photo updates across all albums before going back to the albums view
+        synchronizePhotoUpdates();
+
         // Retrieve the map of users
         Map<String, User> usersMap = DataManager.getUsersMap();
 
@@ -815,6 +834,9 @@ public class AlbumViewController {
      */
     @FXML
     private void handleLogout() {
+        // Synchronize photo updates across all albums before logging out
+        synchronizePhotoUpdates();
+
         // Save the current state before logging out
         DataManager.saveUserData(currentUser);
 
@@ -855,4 +877,27 @@ public class AlbumViewController {
         alert.setContentText(message);
         alert.showAndWait();
     } 
+    
+    /**
+     * Method to synchronize photo updates across all albums.
+     * This method is called when the user logs out, quits, or goes back to the user view from the album view.
+     * It updates the captions and tags of photos in other albums when they are changed in the current album.
+     */
+    private void synchronizePhotoUpdates() {
+        for (Photo photo : selectedAlbum.getPhotos()) {
+            String currentPhotoPath = photo.getFilePath();
+            for (Album album : currentUser.getAlbums()) {
+                if (!album.equals(selectedAlbum)) { // Skip the current album
+                    for (Photo otherPhoto : album.getPhotos()) {
+                        if (otherPhoto.getFilePath().equals(currentPhotoPath)) {
+                            // Found a matching photo in another album, update its caption and tags
+                            otherPhoto.setCaption(photo.getCaption());
+                            otherPhoto.setTags(new ArrayList<>(photo.getTags())); // Copy the tags
+                        }
+                    }
+                }
+            }
+        }
+        DataManager.saveUserData(currentUser); // Save changes to user data
+    }
 }
