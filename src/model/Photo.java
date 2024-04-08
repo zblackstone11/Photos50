@@ -163,7 +163,7 @@ public class Photo implements Serializable {
 
     /**
      * Method to add a tag.
-     * @param tag The tag to add.
+     * @param newTag The tag to add.
      * @return True if the tag was added, false otherwise.
      */
     public boolean addTag(Tag newTag) {
